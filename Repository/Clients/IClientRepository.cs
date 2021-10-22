@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
-using Chimera_v2.Models;
+using Chimera_v2.DTOs;
+
 
 namespace Chimera_v2.Repository.Clients
 {
     public interface IClientRepository
     {
-        Client GetClient(Guid id);
-        List<Client> GetAllClient();
+        ClientDTO GetClient(Guid id);
+        List<ClientDTO> GetAllClients();
     }
 }
