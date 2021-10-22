@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Chimera_v2.DTOs;
 
 
@@ -7,7 +8,11 @@ namespace Chimera_v2.Repository.Clients
 {
     public interface IClientRepository
     {
-        ClientDTO GetClient(Guid id);
-        List<ClientDTO> GetAllClients();
+       Task<ClientDTO> GetClientAsync(Guid id);
+       Task<List<ClientDTO>> GetAllClients();
+       Task<ClientDTO> CreateClient(ClientDTO clientDto);
+       Task<ClientDTO> UpdateClient(ClientDTO clientDto);
+       Task DeleteClient(string name);
+
     }
 }

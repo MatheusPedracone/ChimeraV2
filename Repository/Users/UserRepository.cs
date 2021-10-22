@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Security.Authentication;
 using System.Threading.Tasks;
@@ -9,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 
-namespace Chimera_v2.Repository
+namespace Chimera_v2.Repository.Users
 {
     public class UserRepository : IUserRepository
     {
@@ -30,10 +29,10 @@ namespace Chimera_v2.Repository
                 .FirstOrDefaultAsync(x => x.Username == userName);
         }
 
-        public async Task<UserDTO> ValidateUser(UserDTO user)
+        public async Task<UserDTO> ValidateUser(UserDTO userDto)
         {
-            var validateUser = await GetUserByUsername(user.Username);
-            if (BCrypt.Net.BCrypt.EnhancedVerify(user.Password, validateUser.Password))
+            var validateUser = await GetUserByUsername(userDto.Username);
+            if (BCrypt.Net.BCrypt.EnhancedVerify(userDto.Password, validateUser.Password))
             {
                 return new UserDTO
                 {
@@ -44,9 +43,9 @@ namespace Chimera_v2.Repository
             throw new AuthenticationException();
         }
 
-        public async Task<UserDTO> CreateUser(UserDTO user)
+        public async Task<UserDTO> CreateUser(UserDTO userDto)
         {
-            var userCreate = await GetUserByUsername(user.Username);
+            var userCreate = await GetUserByUsername(userDto.Username);
             if (userCreate != default)
             {
                 throw new BadHttpRequestException("User already existis!");
@@ -54,14 +53,14 @@ namespace Chimera_v2.Repository
 
             await _context.Users.AddAsync(new User
             {
-                Username = user.Username,
-                Password = BCrypt.Net.BCrypt.EnhancedHashPassword(user.Password)
+                Username = userDto.Username,
+                Password = BCrypt.Net.BCrypt.EnhancedHashPassword(userDto.Password)
             });
             await _context.SaveChangesAsync();
             return new UserDTO
             {
-                Username = user.Username,
-                Password = user.Password
+                Username = userDto.Username,
+                Password = userDto.Password
             };
         }
 
@@ -71,21 +70,21 @@ namespace Chimera_v2.Repository
                 .FirstOrDefaultAsync(u => u.Username == userName);
         }
 
-        public async Task<UserDTO> UpdateUser(UserDTO user)
+        public async Task<UserDTO> UpdateUser(UserDTO userDto)
         {
-            var user1 = await GetUserByUsername(user.Username);
+            var user = await GetUserByUsername(userDto.Username);
 
-            if (user1 == default)
+            if (user == default)
             {
                 return default;
             }
-            user1.Username = user.Username;
-            user1.Password = user.Password;
+            user.Username = userDto.Username;
+            user.Password = userDto.Password;
             await _context.SaveChangesAsync();
             return new UserDTO()
             {
-                Username = user.Username,
-                Password = BCrypt.Net.BCrypt.EnhancedHashPassword(user.Password)
+                Username = userDto.Username,
+                Password = BCrypt.Net.BCrypt.EnhancedHashPassword(userDto.Password)
             };
         }
 

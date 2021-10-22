@@ -2,49 +2,45 @@ using System;
 using System.Collections.Generic;
 using Chimera_v2.DTOs;
 using Chimera_v2.DTOs.Converter.Implementations;
-using Chimera_v2.Models;
-using Chimera_v2.Repository.Generic;
+using Chimera_v2.Repository.Clients;
+
 
 namespace Chimera_v2.Business.Implementations
 {
     public class ClientBusinessImplementations : IClientBusiness
     {
-        private readonly IRepository<Client> _repository;
-
+        private readonly IClientRepository _repository;
         private readonly ClientConverter _converter;
 
-        public ClientBusinessImplementations(IRepository<Client> repository)
+        public ClientBusinessImplementations(IClientRepository repository)
         {
-            _repository = repository;
+           _repository = repository;
             _converter = new ClientConverter();
         }
-        public ClientDTO Create(ClientDTO client)
+
+        public ClientDTO Create(ClientDTO clientDto)
         {
-            var clientEntity = _converter.Parse(client);
-            clientEntity = _repository.Create(clientEntity);
-            return _converter.Parse(clientEntity);
+            throw new NotImplementedException();
         }
 
-        public void Delete(Guid id)
+        public ClientDTO FindById(Guid guid)
         {
-            _repository.Delete(id);
+            throw new NotImplementedException();
         }
 
         public List<ClientDTO> FindAll()
         {
-            return _converter.Parse(_repository.FindAll());
+            throw new NotImplementedException();
         }
 
-        public ClientDTO FindById(Guid id)
+        public ClientDTO Update(ClientDTO clientDto)
         {
-            return _converter.Parse(_repository.FindById(id));
+            throw new NotImplementedException();
         }
 
-        public ClientDTO Update(ClientDTO client)
+        public void Delete(Guid guid)
         {
-            var clientEntity = _converter.Parse(client);
-            clientEntity = _repository.Update(clientEntity);
-            return _converter.Parse(clientEntity);
+            throw new NotImplementedException();
         }
     }
 }

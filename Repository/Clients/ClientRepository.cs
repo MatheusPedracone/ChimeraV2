@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
+using System.Threading.Tasks;
 using Chimera_v2.Data;
 using Chimera_v2.DTOs;
 using Chimera_v2.Models;
@@ -11,27 +13,102 @@ namespace Chimera_v2.Repository.Clients
     public class ClientRepository : IClientRepository
     {
         private readonly AppDbContext _context;
+
         public ClientRepository(AppDbContext context)
         {
             _context = context;
         }
 
-        public List<ClientDTO> GetAllClients()
+        public async Task<List<ClientDTO>> GetAllClients()
         {
+            return await _context.Clients
+                .Include(c => c.Adress)
+                .Select(c => new ClientDTO
+                {
+                    Name = c.Name,
+                    CPF = c.CPF,
+                    IE = c.IE,
+                    ContributorType = c.ContributorType,
+                    Email = c.Email,
+                    Phone = c.Phone,
+                    Adress = new AdressDTO
+                    {
+                        ZipCode = c.Adress.ZipCode,
+                        Street = c.Adress.Street,
+                        District = c.Adress.District,
+                        County = c.Adress.County,
+                        AdressNumber = c.Adress.AdressNumber,
+                        UF = c.Adress.UF
+                    }
+                })
+                .ToListAsync();
         }
 
-        public ClientDTO GetClient(Guid id)
+        public async Task<ClientDTO> GetClientAsync(Guid id)
         {
-            var client = _context.Clients
-                                       .Include(c => c.Adress)
-                                       .Where(c => c.Id == id)
-                                       .FirstOrDefault();
-            if (client == null)
+            var client = await _context.Clients
+                .Include(c => c.Adress)
+                .Where(c => c.Id.Equals(id))
+                .Select(c => new ClientDTO
+                {
+                    Name = c.Name,
+                    CPF = c.CPF,
+                    IE = c.IE,
+                    ContributorType = c.ContributorType,
+                    Email = c.Email,
+                    Phone = c.Phone,
+                    Adress = new AdressDTO
+                    {
+                        ZipCode = c.Adress.ZipCode,
+                        Street = c.Adress.Street,
+                        District = c.Adress.District,
+                        County = c.Adress.County,
+                        AdressNumber = c.Adress.AdressNumber,
+                        UF = c.Adress.UF
+                    }
+                })
+                .FirstOrDefaultAsync();
+
+            return client ?? null;
+        }
+
+        public Task<ClientDTO> CreateClient(ClientDTO clientDto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<ClientDTO> UpdateClient(ClientDTO clientDto)
+        {
+            var client = await GetByNameTracking(clientDto.Name);
+
+            if (client == default)
             {
-                return NotFound();
+                return default;
             }
-            return client;
+
+            client.Name = clientDto.Name;
+            client.CPF = clientDto.CPF;
+            client.IE = clientDto.IE;
+            client.ContributorType = clientDto.ContributorType;
+            client.Email = clientDto.Email;
+            client.Phone = clientDto.Phone;
+            client.Adress = new Adress
+            {
+
+            };
         }
 
+        public async Task<Client> GetByNameTracking(string name)
+        {
+            return await _context.Clients
+                .FirstOrDefaultAsync(c => c.Name == name);
+        }
+
+        public async Task DeleteClient(string name)
+        {
+            var client = await GetByNameTracking(name);
+            _context.Clients.Remove(client);
+            await _context.SaveChangesAsync();
+        }
     }
 }

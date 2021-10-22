@@ -4,9 +4,8 @@ using System.Text;
 using Chimera_v2.Business;
 using Chimera_v2.Business.Implementations;
 using Chimera_v2.Data;
-using Chimera_v2.Repository;
 using Chimera_v2.Repository.Clients;
-using Chimera_v2.Repository.Generic;
+using Chimera_v2.Repository.Users;
 using Chimera_v2.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -60,12 +59,11 @@ namespace Chimera_v2
             services.AddControllers();
 
             services.AddScoped<IClientBusiness, ClientBusinessImplementations>();
-            services.AddScoped<IAdressbusiness, AdressBusinessImplementations>();
+            // services.AddScoped<IAdressbusiness, AdressBusinessImplementations>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IClientRepository, ClientRepository>();
 
             services.AddScoped<ITokenService, TokenService>();
-            services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
 
 
             services.AddMvc();

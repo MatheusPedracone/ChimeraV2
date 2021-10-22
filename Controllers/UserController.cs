@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using Chimera_v2.DTOs;
-using Chimera_v2.Repository;
+using Chimera_v2.Repository.Users;
 using Chimera_v2.Services;
 using Microsoft.AspNetCore.Mvc;
 

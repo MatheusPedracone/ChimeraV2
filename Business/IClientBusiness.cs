@@ -6,10 +6,10 @@ namespace Chimera_v2.Business
 {
     public interface IClientBusiness
     {
-        ClientDTO Create(ClientDTO client);
-        ClientDTO FindById(Guid id);
+        ClientDTO Create(ClientDTO clientDto);
+        ClientDTO FindById(Guid guid);
         List<ClientDTO> FindAll();
-        ClientDTO Update(ClientDTO client);
-        void Delete(Guid id);
+        ClientDTO Update(ClientDTO clientDto);
+        void Delete(Guid guid);
     }
 }
