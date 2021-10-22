@@ -9,7 +9,7 @@ namespace Chimera_v2.DTOs.Converter.Implementations
     {
         public AdressDTO Parse(Adress origin)
         {
-            if(origin == null) return null;
+            if (origin == null) return null;
             return new AdressDTO
             {
                 ZipCode = origin.ZipCode,
@@ -22,7 +22,7 @@ namespace Chimera_v2.DTOs.Converter.Implementations
         }
         public Adress Parse(AdressDTO origin)
         {
-            if(origin == null) return null;
+            if (origin == null) return null;
             return new Adress
             {
                 ZipCode = origin.ZipCode,
@@ -35,13 +35,13 @@ namespace Chimera_v2.DTOs.Converter.Implementations
         }
         public List<AdressDTO> Parse(List<Adress> origin)
         {
-             if(origin == null) return null;
-            return origin.Select(item => Parse(item)).ToList(); 
+            if (origin == null) return null;
+            return origin.Select(item => Parse(item)).ToList();
         }
         public List<Adress> Parse(List<AdressDTO> origin)
         {
-            if(origin == null) return null;
-            return origin.Select(item => Parse(item)).ToList(); 
+            if (origin == null) return null;
+            return origin.Select(item => Parse(item)).ToList();
         }
     }
 }

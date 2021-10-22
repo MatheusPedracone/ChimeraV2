@@ -18,7 +18,15 @@ namespace Chimera_v2.DTOs.Converter.Implementations
                 ContributorType = origin.ContributorType,
                 Email = origin.Email,
                 Phone = origin.Phone,
-                Adress = origin.AdressDTO,
+                Adress = new Adress
+                {
+                    ZipCode = origin.Adress.ZipCode,
+                    Street = origin.Adress.Street,
+                    District = origin.Adress.District,
+                    County = origin.Adress.County,
+                    AdressNumber = origin.Adress.AdressNumber,
+                    UF = origin.Adress.UF
+                },
             };
         }
         public ClientDTO Parse(Client origin)
@@ -31,7 +39,16 @@ namespace Chimera_v2.DTOs.Converter.Implementations
                 IE = origin.IE,
                 ContributorType = origin.ContributorType,
                 Email = origin.Email,
-                Phone = origin.Phone
+                Phone = origin.Phone,
+                Adress = new AdressDTO
+                {
+                    ZipCode = origin.Adress.ZipCode,
+                    Street = origin.Adress.Street,
+                    District = origin.Adress.District,
+                    County = origin.Adress.County,
+                    AdressNumber = origin.Adress.AdressNumber,
+                    UF = origin.Adress.UF
+                },
             };
         }
         public List<Client> Parse(List<ClientDTO> origin)

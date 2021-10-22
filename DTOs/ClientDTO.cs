@@ -1,3 +1,4 @@
+
 namespace Chimera_v2.DTOs
 {
     public class ClientDTO

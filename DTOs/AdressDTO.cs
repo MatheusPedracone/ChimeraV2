@@ -1,3 +1,4 @@
+
 namespace Chimera_v2.DTOs
 {
     public class AdressDTO
@@ -8,6 +9,6 @@ namespace Chimera_v2.DTOs
         public string County { get; set; }
         public string AdressNumber { get; set; }
         public string UF { get; set; }
-        public ClientDTO Client { get; set; }
+        
     }
 }

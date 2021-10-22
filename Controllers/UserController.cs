@@ -10,8 +10,6 @@ namespace Chimera_v2.Controllers
     {
         private readonly IUserRepository _userRepository;
         private readonly ITokenService _tokenService;
-
-
         public UserController(IUserRepository userRepository, ITokenService tokenService)
         {
             _userRepository = userRepository;

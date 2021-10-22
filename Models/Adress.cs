@@ -11,5 +11,6 @@ namespace Chimera_v2.Models
         public string County { get; set; }
         public string AdressNumber { get; set; }
         public string UF { get; set; }
+        public Client Client { get; set; }
     }
 }

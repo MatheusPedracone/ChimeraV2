@@ -1,3 +1,4 @@
+using Chimera_v2.DTOs;
 using Chimera_v2.Models.Base;
 
 namespace Chimera_v2.Models
