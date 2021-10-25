@@ -26,6 +26,9 @@ namespace Chimera_v2.Migrations
                     b.Property<string>("AdressNumber")
                         .HasColumnType("longtext");
 
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("char(36)");
+
                     b.Property<string>("County")
                         .HasColumnType("longtext");
 
@@ -43,6 +46,9 @@ namespace Chimera_v2.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ClientId")
+                        .IsUnique();
+
                     b.ToTable("Adresses");
                 });
 
@@ -50,9 +56,6 @@ namespace Chimera_v2.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<Guid?>("AdressId")
                         .HasColumnType("char(36)");
 
                     b.Property<string>("CPF")
@@ -75,8 +78,6 @@ namespace Chimera_v2.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AdressId");
-
                     b.ToTable("Clients");
                 });
 
@@ -97,12 +98,19 @@ namespace Chimera_v2.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Chimera_v2.Models.Adress", b =>
+                {
+                    b.HasOne("Chimera_v2.Models.Client", "Client")
+                        .WithOne("Adress")
+                        .HasForeignKey("Chimera_v2.Models.Adress", "ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
             modelBuilder.Entity("Chimera_v2.Models.Client", b =>
                 {
-                    b.HasOne("Chimera_v2.Models.Adress", "Adress")
-                        .WithMany()
-                        .HasForeignKey("AdressId");
-
                     b.Navigation("Adress");
                 });
 #pragma warning restore 612, 618

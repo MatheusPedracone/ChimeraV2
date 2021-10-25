@@ -6,7 +6,6 @@ namespace Chimera_v2.Models
 {
     public class Client : BaseEntity
     {
-        [Key]
         public string Name { get; set; }
         public string CPF { get; set; }
         public string IE { get; set; }

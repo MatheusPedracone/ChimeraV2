@@ -11,5 +11,13 @@ namespace Chimera_v2.Data
         public DbSet<Client> Clients { get; set; }
         public DbSet<Adress> Adresses { get; set; }
         public DbSet<User> Users { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<Client>(entity =>
+                entity.HasOne(x => x.Adress)
+                .WithOne(x => x.Client)
+                .HasForeignKey<Adress>(x => x.ClientId));
+        }
     }
 }
