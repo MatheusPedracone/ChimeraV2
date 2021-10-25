@@ -21,18 +21,22 @@ namespace Chimera_v2.Business.Implementations
         {
             return await _repository.GetAllClientsAsync();
         }
+        
         public async Task<ClientDTO> FindById(Guid id)
         {
             return await _repository.GetClientAsync(id);
         }
+
         public async Task<ClientDTO> Create(ClientDTO clientDto)
         {
             return await _repository.CreateClient(clientDto);
         }
+
         public async Task<ClientDTO> Update(ClientDTO clientDto)
         {
             return await _repository.UpdateClient(clientDto);
         }
+
         public async Task Delete(string name)
         {
            await _repository.DeleteClient(name);

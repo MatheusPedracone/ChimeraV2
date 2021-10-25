@@ -52,3 +52,4 @@ C:\Users\matheus\Desktop\Chimera-v2\bin\Debug\net5.0\Microsoft.IdentityModel.Pro
 C:\Users\matheus\Desktop\Chimera-v2\bin\Debug\net5.0\Microsoft.IdentityModel.Tokens.dll
 C:\Users\matheus\Desktop\Chimera-v2\bin\Debug\net5.0\System.IdentityModel.Tokens.Jwt.dll
 C:\Users\matheus\Desktop\Chimera-v2\bin\Debug\net5.0\BCrypt.Net-Next.dll
+C:\Users\matheus\Desktop\Chimera-v2\bin\Debug\net5.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll

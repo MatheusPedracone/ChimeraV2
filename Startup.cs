@@ -55,8 +55,9 @@ namespace Chimera_v2
                 });
 
             services.AddCors();
-
-            services.AddControllers();
+            
+            services.AddControllers().AddNewtonsoftJson(options =>
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             services.AddScoped<IClientBusiness, ClientBusinessImplementations>();
             // services.AddScoped<IAdressbusiness, AdressBusinessImplementations>();

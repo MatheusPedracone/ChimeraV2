@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Chimera_v2.Data;
 using Chimera_v2.DTOs;
 using Chimera_v2.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace Chimera_v2.Repository.Clients
@@ -70,9 +71,52 @@ namespace Chimera_v2.Repository.Clients
                 })
                 .ToListAsync();
         }
-        public Task<ClientDTO> CreateClient(ClientDTO clientDto)
+        public async Task<ClientDTO> CreateClient(ClientDTO clientDto)
         {
-            throw new NotImplementedException();
+            var client = await GetByNameTracking(clientDto.Name);
+
+            if (client != default)
+            {
+                throw new BadHttpRequestException("Client already existis!");
+            }
+            await _context.Clients.AddAsync(new Client
+
+            {
+                Name = clientDto.Name,
+                CPF = clientDto.CPF,
+                IE = clientDto.IE,
+                ContributorType = clientDto.ContributorType,
+                Email = clientDto.Email,
+                Phone = clientDto.Phone,
+                Adress = new Adress
+                {
+                    ZipCode = clientDto.Adress.ZipCode,
+                    Street = clientDto.Adress.Street,
+                    District = clientDto.Adress.District,
+                    County = clientDto.Adress.County,
+                    AdressNumber = clientDto.Adress.AdressNumber,
+                    UF = clientDto.Adress.UF
+                }
+            });
+            await _context.SaveChangesAsync();
+            return new ClientDTO
+            {
+                Name = clientDto.Name,
+                CPF = clientDto.CPF,
+                IE = clientDto.IE,
+                ContributorType = clientDto.ContributorType,
+                Email = clientDto.Email,
+                Phone = clientDto.Phone,
+                Adress = new AdressDTO
+                {
+                    ZipCode = clientDto.Adress.ZipCode,
+                    Street = clientDto.Adress.Street,
+                    District = clientDto.Adress.District,
+                    County = clientDto.Adress.County,
+                    AdressNumber = clientDto.Adress.AdressNumber,
+                    UF = clientDto.Adress.UF
+                }
+            };
         }
         public async Task<ClientDTO> UpdateClient(ClientDTO clientDto)
         {
