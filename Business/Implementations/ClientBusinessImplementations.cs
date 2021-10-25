@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Chimera_v2.DTOs;
 using Chimera_v2.DTOs.Converter.Implementations;
 using Chimera_v2.Repository.Clients;
@@ -10,37 +11,31 @@ namespace Chimera_v2.Business.Implementations
     public class ClientBusinessImplementations : IClientBusiness
     {
         private readonly IClientRepository _repository;
-        private readonly ClientConverter _converter;
 
         public ClientBusinessImplementations(IClientRepository repository)
         {
-           _repository = repository;
-            _converter = new ClientConverter();
+            _repository = repository;
         }
 
-        public ClientDTO Create(ClientDTO clientDto)
+        public async Task<List<ClientDTO>> FindAll()
         {
-            throw new NotImplementedException();
+            return await _repository.GetAllClientsAsync();
         }
-
-        public ClientDTO FindById(Guid guid)
+        public async Task<ClientDTO> FindById(Guid id)
         {
-            throw new NotImplementedException();
+            return await _repository.GetClientAsync(id);
         }
-
-        public List<ClientDTO> FindAll()
+        public async Task<ClientDTO> Create(ClientDTO clientDto)
         {
-            throw new NotImplementedException();
+            return await _repository.CreateClient(clientDto);
         }
-
-        public ClientDTO Update(ClientDTO clientDto)
+        public async Task<ClientDTO> Update(ClientDTO clientDto)
         {
-            throw new NotImplementedException();
+            return await _repository.UpdateClient(clientDto);
         }
-
-        public void Delete(Guid guid)
+        public async Task Delete(string name)
         {
-            throw new NotImplementedException();
+           await _repository.DeleteClient(name);
         }
     }
 }

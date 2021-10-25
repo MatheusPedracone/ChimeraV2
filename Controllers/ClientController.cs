@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Chimera_v2.Business;
 using Chimera_v2.DTOs;
 using Microsoft.AspNetCore.Mvc;
@@ -44,13 +45,11 @@ namespace Chimera_v2.Controllers
             return Ok(_clientBusiness.Update(client));
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        [HttpDelete("{name}")]
+        public IActionResult Delete(string name)
         {
-            _clientBusiness.Delete(id);
+            _clientBusiness.Delete(name);
             return NoContent();
         }
-
     }
-
 }
