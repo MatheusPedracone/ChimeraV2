@@ -144,16 +144,39 @@ namespace Chimera_v2.Repository.Clients
             };
             await _context.SaveChangesAsync();
 
-            return new ClientDTO();
+            return new ClientDTO()
+            {
+                Name = clientDto.Name,
+                CPF = clientDto.CPF,
+                IE = clientDto.IE,
+                ContributorType = clientDto.ContributorType,
+                Email = clientDto.Email,
+                Phone = clientDto.Phone,
+                Adress = new AdressDTO
+                {
+                    ZipCode = clientDto.Adress.ZipCode,
+                    Street = clientDto.Adress.Street,
+                    District = clientDto.Adress.District,
+                    County = clientDto.Adress.County,
+                    AdressNumber = clientDto.Adress.AdressNumber,
+                    UF = clientDto.Adress.UF
+                }
+            };
         }
         public async Task<Client> GetByNameTracking(string name)
         {
             return await _context.Clients
                 .FirstOrDefaultAsync(c => c.Name == name);
         }
-        public async Task DeleteClient(string name)
+
+        public async Task<Client> GetByIdTracking(Guid id)
         {
-            var client = await GetByNameTracking(name);
+            return await _context.Clients
+                .FirstOrDefaultAsync(c => c.Id == id);
+        }
+        public async Task DeleteClient(Guid id)
+        {
+            var client = await GetByIdTracking(id);
             _context.Clients.Remove(client);
             await _context.SaveChangesAsync();
         }

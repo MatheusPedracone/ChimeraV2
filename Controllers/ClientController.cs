@@ -20,35 +20,35 @@ namespace Chimera_v2.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok(_clientBusiness.FindAll());
+            return Ok(_clientBusiness.FindAll().Result);
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(Guid id)
+        public async Task<IActionResult> Get(Guid id)
         {
-            var client = _clientBusiness.FindById(id);
+            var client = await _clientBusiness.FindById(id);
             if (client == null) return NotFound();
-            return Ok(_clientBusiness.FindAll());
+            return Ok(client);
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] ClientDTO client)
+        public IActionResult Post([FromBody] ClientDTO clientDto)
         {
-            if (client == null) return BadRequest();
-            return Ok(_clientBusiness.Create(client));
+            if (clientDto == null) return BadRequest();
+            return Ok(_clientBusiness.Create(clientDto).Result);
         }
 
         [HttpPut]
-        public IActionResult Put([FromBody] ClientDTO client)
+        public IActionResult Put([FromBody] ClientDTO clientDto)
         {
-            if (client == null) return BadRequest();
-            return Ok(_clientBusiness.Update(client));
+            if (clientDto == null) return BadRequest();
+            return Ok(_clientBusiness.Update(clientDto).Result);
         }
 
-        [HttpDelete("{name}")]
-        public IActionResult Delete(string name)
+        [HttpDelete("{id}")]
+        public IActionResult Delete(Guid id)
         {
-            _clientBusiness.Delete(name);
+            _clientBusiness.Delete(id);
             return NoContent();
         }
     }

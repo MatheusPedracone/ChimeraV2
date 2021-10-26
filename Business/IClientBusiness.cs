@@ -11,6 +11,6 @@ namespace Chimera_v2.Business
         Task<ClientDTO> FindById(Guid id);
         Task<ClientDTO> Create(ClientDTO clientDto);
         Task<ClientDTO> Update(ClientDTO clientDto);
-        Task Delete(string name);
+        Task Delete(Guid id);
     }
 }

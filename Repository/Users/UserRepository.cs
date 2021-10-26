@@ -6,7 +6,7 @@ using Chimera_v2.Data;
 using Chimera_v2.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-
+using System;
 
 namespace Chimera_v2.Repository.Users
 {
@@ -87,10 +87,14 @@ namespace Chimera_v2.Repository.Users
                 Password = BCrypt.Net.BCrypt.EnhancedHashPassword(userDto.Password)
             };
         }
-
-        public async Task DeleteUser(string userName)
+          public async Task<User> GetUserByIdTracking(Guid guid)
         {
-            var userEntity = await GetUserByUsernameTracking(userName);
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == guid);
+        }
+        public async Task DeleteUser(Guid guid)
+        {
+            var userEntity = await GetUserByIdTracking(guid);
             _context.Users.Remove(userEntity);
             await _context.SaveChangesAsync();
         }

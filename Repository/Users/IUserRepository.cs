@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Chimera_v2.DTOs;
 
@@ -11,6 +12,6 @@ namespace Chimera_v2.Repository.Users
         Task<UserDTO> CreateUser(UserDTO userDto);
         Task<UserDTO> UpdateUser(UserDTO userDto);
         //depois fazer delete(Guid guid)
-        Task DeleteUser(string userName);
+        Task DeleteUser(Guid guid);
     }
 }
