@@ -60,7 +60,6 @@ namespace Chimera_v2
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             services.AddScoped<IClientBusiness, ClientBusinessImplementations>();
-            // services.AddScoped<IAdressbusiness, AdressBusinessImplementations>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IClientRepository, ClientRepository>();
 

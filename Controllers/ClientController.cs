@@ -18,7 +18,6 @@ namespace Chimera_v2.Controllers
         }
 
         [HttpGet]
-       
         public IActionResult Get()
         {
             return Ok(_clientBusiness.FindAll().Result);
@@ -33,10 +32,18 @@ namespace Chimera_v2.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] ClientDTO clientDto)
+        public ActionResult Post([FromBody] ClientDTO clientDto)
         {
             if (clientDto == null) return BadRequest();
             return Ok(_clientBusiness.Create(clientDto).Result);
+        }
+
+        [HttpPut]
+        public IActionResult Put([FromBody] ClientDTO clientDto)
+        {
+            if (clientDto == null) return BadRequest();
+            var client = _clientBusiness.Update(clientDto).Result;
+            return Ok(client);
         }
 
         [HttpPatch("{id}")]

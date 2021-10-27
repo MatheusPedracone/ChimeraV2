@@ -32,9 +32,9 @@ namespace Chimera_v2.Business.Implementations
         {
            await _repository.DeleteClient(id);
         }
-        public async Task<ClientDTO> Update(Guid id)
+        public async Task<ClientDTO> Update(ClientDTO clientDto)
         {
-            return await _repository.UpdateClient(id);
+            return await _repository.UpdateClient(clientDto);
         }
         public async Task<ClientDTO> Disable(Guid id)
         {

@@ -118,19 +118,34 @@ namespace Chimera_v2.Repository.Clients
                 }
             };
         }
-        public async Task<ClientDTO> UpdateClient(Guid id)
+        public async Task<ClientDTO> UpdateClient(ClientDTO clientDto)
         {
-            var client = await _context.Clients.FirstOrDefaultAsync(c => c.Id == id);
+            var client = await _context.Clients.Include(c => c.Adress).FirstOrDefaultAsync(c => c.Id == clientDto.Guid);
 
             if (client == default)
             {
                 return default;
             }
-
+            client.Id = clientDto.Guid;
+            client.Name = clientDto.Name;
+            client.CPF = clientDto.CPF;
+            client.IE = clientDto.IE;
+            client.ContributorType = clientDto.ContributorType;
+            client.Email = clientDto.Email;
+            client.Phone = clientDto.Phone;
+            client.Adress = new Adress
+            {
+                ZipCode = clientDto.Adress.ZipCode,
+                Street = clientDto.Adress.Street,
+                District = clientDto.Adress.District,
+                County = clientDto.Adress.County,
+                AdressNumber = clientDto.Adress.AdressNumber,
+                UF = clientDto.Adress.UF
+            };
             await _context.SaveChangesAsync();
 
             return new ClientDTO
-             {
+            {
                 Name = client.Name,
                 CPF = client.CPF,
                 IE = client.IE,
@@ -146,9 +161,8 @@ namespace Chimera_v2.Repository.Clients
                     AdressNumber = client.Adress.AdressNumber,
                     UF = client.Adress.UF
                 }
-             };  
+            };
         }
-
 
         public async Task DeleteClient(Guid id)
         {
@@ -167,6 +181,7 @@ namespace Chimera_v2.Repository.Clients
             return await _context.Clients
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
+
 
         public async Task<ClientDTO> Disable(Guid id)
         {

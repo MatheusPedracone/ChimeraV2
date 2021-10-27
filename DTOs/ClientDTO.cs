@@ -1,8 +1,9 @@
-
+using System;
 namespace Chimera_v2.DTOs
 {
     public class ClientDTO
     {
+        public Guid Guid { get; set; }
         public string Name { get; set; }
         public string CPF { get; set; }
         public string IE { get; set; }
