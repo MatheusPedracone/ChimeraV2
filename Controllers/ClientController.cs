@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Chimera_v2.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[controller]/v2")]
     public class ClientController : ControllerBase
     {
         private readonly IClientBusiness _clientBusiness;
@@ -18,6 +18,7 @@ namespace Chimera_v2.Controllers
         }
 
         [HttpGet]
+       
         public IActionResult Get()
         {
             return Ok(_clientBusiness.FindAll().Result);
@@ -38,11 +39,11 @@ namespace Chimera_v2.Controllers
             return Ok(_clientBusiness.Create(clientDto).Result);
         }
 
-        [HttpPut]
-        public IActionResult Put([FromBody] ClientDTO clientDto)
+        [HttpPatch("{id}")]
+        public IActionResult Patch([FromBody] Guid id)
         {
-            if (clientDto == null) return BadRequest();
-            return Ok(_clientBusiness.Update(clientDto).Result);
+           var client = _clientBusiness.Disable(id);
+            return Ok(client.Result);
         }
 
         [HttpDelete("{id}")]

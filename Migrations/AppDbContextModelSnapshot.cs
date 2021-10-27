@@ -67,6 +67,9 @@ namespace Chimera_v2.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("longtext");
 
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<string>("IE")
                         .HasColumnType("longtext");
 

@@ -9,6 +9,7 @@ namespace Chimera_v2.DTOs
         public string ContributorType { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
+        public bool Enabled { get; set; }
         public AdressDTO Adress { get; set; }
     }
 }

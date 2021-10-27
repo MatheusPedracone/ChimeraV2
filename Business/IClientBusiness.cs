@@ -10,7 +10,8 @@ namespace Chimera_v2.Business
         Task<List<ClientDTO>> FindAll();
         Task<ClientDTO> FindById(Guid id);
         Task<ClientDTO> Create(ClientDTO clientDto);
-        Task<ClientDTO> Update(ClientDTO clientDto);
+        Task<ClientDTO> Update(Guid id);
+        Task<ClientDTO> Disable(Guid id);
         Task Delete(Guid id);
     }
 }

@@ -11,7 +11,8 @@ namespace Chimera_v2.Repository.Clients
        Task<ClientDTO> GetClientAsync(Guid id);
        Task<List<ClientDTO>> GetAllClientsAsync();
        Task<ClientDTO> CreateClient(ClientDTO clientDto);
-       Task<ClientDTO> UpdateClient(ClientDTO clientDto);
+       Task<ClientDTO> UpdateClient(Guid id);
+       Task<ClientDTO> Disable(Guid id);
        Task DeleteClient(Guid id);
     }
 }

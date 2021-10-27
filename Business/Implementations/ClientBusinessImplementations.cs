@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Chimera_v2.DTOs;
-using Chimera_v2.DTOs.Converter.Implementations;
+
 using Chimera_v2.Repository.Clients;
 
 
@@ -16,7 +16,6 @@ namespace Chimera_v2.Business.Implementations
         {
             _repository = repository;
         }
-
         public async Task<List<ClientDTO>> FindAll()
         {
             return await _repository.GetAllClientsAsync();
@@ -29,13 +28,17 @@ namespace Chimera_v2.Business.Implementations
         {
             return await _repository.CreateClient(clientDto);
         }
-        public async Task<ClientDTO> Update(ClientDTO clientDto)
-        {
-            return await _repository.UpdateClient(clientDto);
-        }
         public async Task Delete(Guid id)
         {
            await _repository.DeleteClient(id);
+        }
+        public async Task<ClientDTO> Update(Guid id)
+        {
+            return await _repository.UpdateClient(id);
+        }
+        public async Task<ClientDTO> Disable(Guid id)
+        {
+            return await _repository.Disable(id);
         }
     }
 }
