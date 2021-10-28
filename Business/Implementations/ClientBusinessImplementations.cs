@@ -16,29 +16,34 @@ namespace Chimera_v2.Business.Implementations
         {
             _repository = repository;
         }
-        public async Task<List<ClientDTO>> FindAll()
+        public List<ClientDTO> FindAll()
         {
-            return await _repository.GetAllClientsAsync();
+            return  _repository.GetAllClients();
         }
-        public async Task<ClientDTO> FindById(Guid id)
+
+        public ClientDTO FindById(Guid id)
         {
-            return await _repository.GetClientAsync(id);
+            return  _repository.GetClient(id);
         }
-        public async Task<ClientDTO> Create(ClientDTO clientDto)
+
+        public ClientDTO Create(ClientDTO clientDto)
         {
-            return await _repository.CreateClient(clientDto);
+            return  _repository.CreateClient(clientDto);
         }
-        public async Task Delete(Guid id)
+
+        public ClientDTO Update(ClientDTO clientDto)
         {
-           await _repository.DeleteClient(id);
+            return  _repository.UpdateClient(clientDto);
         }
-        public async Task<ClientDTO> Update(ClientDTO clientDto)
+
+       public ClientDTO Disable(Guid id)
         {
-            return await _repository.UpdateClient(clientDto);
+            return  _repository.Disable(id);
         }
-        public async Task<ClientDTO> Disable(Guid id)
+
+        public void Delete(Guid id)
         {
-            return await _repository.Disable(id);
+            _repository.DeleteClient(id);
         }
     }
 }

@@ -7,11 +7,11 @@ namespace Chimera_v2.Business
 {
     public interface IClientBusiness
     {
-        Task<List<ClientDTO>> FindAll();
-        Task<ClientDTO> FindById(Guid id);
-        Task<ClientDTO> Create(ClientDTO clientDto);
-        Task<ClientDTO> Update(ClientDTO clientDto);
-        Task<ClientDTO> Disable(Guid id);
-        Task Delete(Guid id);
+        List<ClientDTO> FindAll();
+       ClientDTO FindById(Guid id);
+        ClientDTO Create(ClientDTO clientDto);
+        ClientDTO Update(ClientDTO clientDto);
+        ClientDTO Disable(Guid id);
+        void Delete(Guid id);
     }
 }

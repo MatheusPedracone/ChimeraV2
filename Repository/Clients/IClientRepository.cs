@@ -8,11 +8,11 @@ namespace Chimera_v2.Repository.Clients
 {
     public interface IClientRepository
     {
-       Task<ClientDTO> GetClientAsync(Guid id);
-       Task<List<ClientDTO>> GetAllClientsAsync();
-       Task<ClientDTO> CreateClient(ClientDTO clientDto);
-       Task<ClientDTO> UpdateClient(ClientDTO clientDto);
-       Task<ClientDTO> Disable(Guid id);
-       Task DeleteClient(Guid id);
+       ClientDTO GetClient(Guid id);
+       List<ClientDTO> GetAllClients();
+       ClientDTO CreateClient(ClientDTO clientDto);
+        ClientDTO UpdateClient(ClientDTO clientDto);
+       ClientDTO Disable(Guid id);
+       void DeleteClient(Guid id);
     }
 }

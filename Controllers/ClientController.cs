@@ -18,15 +18,15 @@ namespace Chimera_v2.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public ActionResult Get()
         {
-            return Ok(_clientBusiness.FindAll().Result);
+            return Ok(_clientBusiness.FindAll());
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(Guid id)
+        public ActionResult Get(Guid id)
         {
-            var client = await _clientBusiness.FindById(id);
+            var client = _clientBusiness.FindById(id);
             if (client == null) return NotFound();
             return Ok(client);
         }
@@ -35,26 +35,26 @@ namespace Chimera_v2.Controllers
         public ActionResult Post([FromBody] ClientDTO clientDto)
         {
             if (clientDto == null) return BadRequest();
-            return Ok(_clientBusiness.Create(clientDto).Result);
+            return Ok(_clientBusiness.Create(clientDto));
         }
 
         [HttpPut]
-        public IActionResult Put([FromBody] ClientDTO clientDto)
+        public ActionResult Put([FromBody] ClientDTO clientDto)
         {
-            if (clientDto == null) return BadRequest();
-            var client = _clientBusiness.Update(clientDto).Result;
+            if (clientDto.Adress.Guid == null) return BadRequest();
+            var client = _clientBusiness.Update(clientDto);
             return Ok(client);
         }
 
         [HttpPatch("{id}")]
-        public IActionResult Patch([FromBody] Guid id)
+        public ActionResult Patch([FromBody] Guid id)
         {
            var client = _clientBusiness.Disable(id);
-            return Ok(client.Result);
+            return Ok(client);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public ActionResult Delete(Guid id)
         {
             _clientBusiness.Delete(id);
             return NoContent();

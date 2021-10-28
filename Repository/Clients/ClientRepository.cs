@@ -18,10 +18,19 @@ namespace Chimera_v2.Repository.Clients
         {
             _context = context;
         }
-
-        public async Task<ClientDTO> GetClientAsync(Guid id)
+        public Client GetByNameTracking(string name)
         {
-            var client = await _context.Clients
+            return  _context.Clients
+                .FirstOrDefault(c => c.Name == name);
+        }
+        public Client GetByIdTracking(Guid id)
+        {
+            return  _context.Clients
+                .FirstOrDefault(c => c.Id == id);
+        }
+        public ClientDTO GetClient(Guid id)
+        {
+             var client = _context.Clients
                 .Include(c => c.Adress)
                 .Where(c => c.Id.Equals(id))
                 .Select(c => new ClientDTO
@@ -42,14 +51,13 @@ namespace Chimera_v2.Repository.Clients
                         UF = c.Adress.UF
                     }
                 })
-                .FirstOrDefaultAsync();
+                .FirstOrDefault();
 
             return client ?? null;
         }
-
-        public async Task<List<ClientDTO>> GetAllClientsAsync()
+        public List<ClientDTO> GetAllClients()
         {
-            return await _context.Clients
+              return  _context.Clients
                 .Include(c => c.Adress)
                 .Select(c => new ClientDTO
                 {
@@ -69,17 +77,17 @@ namespace Chimera_v2.Repository.Clients
                         UF = c.Adress.UF
                     }
                 })
-                .ToListAsync();
+                .ToList();
         }
-        public async Task<ClientDTO> CreateClient(ClientDTO clientDto)
+        public ClientDTO CreateClient(ClientDTO clientDto)
         {
-            var client = await GetByNameTracking(clientDto.Name);
+             var client =  GetByNameTracking(clientDto.Name);
 
             if (client != default)
             {
                 throw new BadHttpRequestException("Client already existis!");
             }
-            await _context.Clients.AddAsync(new Client
+             _context.Clients.Add(new Client
             {
                 Name = clientDto.Name,
                 CPF = clientDto.CPF,
@@ -97,7 +105,7 @@ namespace Chimera_v2.Repository.Clients
                     UF = clientDto.Adress.UF
                 }
             });
-            await _context.SaveChangesAsync();
+             _context.SaveChanges();
 
             return new ClientDTO
             {
@@ -118,82 +126,79 @@ namespace Chimera_v2.Repository.Clients
                 }
             };
         }
-        public async Task<ClientDTO> UpdateClient(ClientDTO clientDto)
+        public ClientDTO UpdateClient(ClientDTO clientDto)
         {
-            var client = await _context.Clients.Include(c => c.Adress).FirstOrDefaultAsync(c => c.Id == clientDto.Guid);
+            var clientUpdate =  _context.Clients
+            .Where(c => c.Id == clientDto.Guid)
+            .Include(c => c.Adress)
+            .ToList()
+            .SingleOrDefault();
 
-            if (client == default)
+            if (clientUpdate != null)
             {
-                return default;
+                // Update client
+                _context.Entry(clientUpdate).CurrentValues.SetValues(clientDto);
+
+                // Update and Insert adress
+                foreach (var adress in _context.Adresses)
+                {
+                    var adressUpdate =  _context.Adresses
+                        .Where(c => c.Id == clientDto.Adress.Guid)
+                        .SingleOrDefault();
+
+                    if (clientDto.Adress.Guid != null)
+                    {
+                        // Update adress
+                        _context.Entry(adressUpdate).CurrentValues.SetValues(adress);
+                    }
+                    else
+                    {   // add adress
+                        var newAdress = new AdressDTO
+                        {
+                            ZipCode = adressUpdate.ZipCode,
+                            Street = adressUpdate.Street,
+                            District = adressUpdate.District,
+                            County = adressUpdate.County,
+                            AdressNumber = adressUpdate.AdressNumber,
+                            UF = adressUpdate.UF
+                        };
+                        _context.Adresses.Add(adressUpdate);
+                    }
+                }
+                 _context.SaveChanges();
+                 
             }
-            client.Id = clientDto.Guid;
-            client.Name = clientDto.Name;
-            client.CPF = clientDto.CPF;
-            client.IE = clientDto.IE;
-            client.ContributorType = clientDto.ContributorType;
-            client.Email = clientDto.Email;
-            client.Phone = clientDto.Phone;
-            client.Adress = new Adress
-            {
-                ZipCode = clientDto.Adress.ZipCode,
-                Street = clientDto.Adress.Street,
-                District = clientDto.Adress.District,
-                County = clientDto.Adress.County,
-                AdressNumber = clientDto.Adress.AdressNumber,
-                UF = clientDto.Adress.UF
-            };
-            await _context.SaveChangesAsync();
-
             return new ClientDTO
             {
-                Name = client.Name,
-                CPF = client.CPF,
-                IE = client.IE,
-                ContributorType = client.ContributorType,
-                Email = client.Email,
-                Phone = client.Phone,
+                Name = clientDto.Name,
+                CPF = clientDto.CPF,
+                IE = clientDto.IE,
+                ContributorType = clientDto.ContributorType,
+                Email = clientDto.Email,
+                Phone = clientDto.Phone,
                 Adress = new AdressDTO
                 {
-                    ZipCode = client.Adress.ZipCode,
-                    Street = client.Adress.Street,
-                    District = client.Adress.District,
-                    County = client.Adress.County,
-                    AdressNumber = client.Adress.AdressNumber,
-                    UF = client.Adress.UF
+                    ZipCode = clientDto.Adress.ZipCode,
+                    Street = clientDto.Adress.Street,
+                    District = clientDto.Adress.District,
+                    County = clientDto.Adress.County,
+                    AdressNumber = clientDto.Adress.AdressNumber,
+                    UF = clientDto.Adress.UF
                 }
             };
         }
 
-        public async Task DeleteClient(Guid id)
-        {
-            var client = await _context.Clients.OrderBy(c => c.Id).Include(c => c.Adress).FirstAsync();
-            _context.Remove(client);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task<Client> GetByNameTracking(string name)
-        {
-            return await _context.Clients
-                .FirstOrDefaultAsync(c => c.Name == name);
-        }
-        public async Task<Client> GetByIdTracking(Guid id)
-        {
-            return await _context.Clients
-                .FirstOrDefaultAsync(c => c.Id == id);
-        }
-
-
-        public async Task<ClientDTO> Disable(Guid id)
+        public ClientDTO Disable(Guid id)
         {
             if (!_context.Clients.Any(c => c.Id.Equals(id))) return null;
-            var clientStatus = await _context.Clients.SingleOrDefaultAsync(c => c.Id.Equals(id));
+            var clientStatus =  _context.Clients.SingleOrDefault(c => c.Id.Equals(id));
             if (clientStatus != null)
             {
                 clientStatus.Enabled = false;
                 try
                 {
                     _context.Entry(clientStatus).CurrentValues.SetValues(clientStatus);
-                    _context.SaveChangesAsync();
+                    _context.SaveChanges();
                 }
                 catch (Exception)
                 {
@@ -218,6 +223,13 @@ namespace Chimera_v2.Repository.Clients
                     UF = clientStatus.Adress.UF
                 }
             };
+        }
+
+        public void DeleteClient(Guid id)
+        {
+            var client =  _context.Clients.OrderBy(c => c.Id == id).Include(c => c.Adress).First();
+            _context.Remove(client);
+            _context.SaveChanges();
         }
     }
 }
