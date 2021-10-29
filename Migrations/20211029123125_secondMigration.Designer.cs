@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Chimera_v2.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20211027210002_firstMigration")]
-    partial class firstMigration
+    [Migration("20211029123125_secondMigration")]
+    partial class secondMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -68,9 +68,6 @@ namespace Chimera_v2.Migrations
 
                     b.Property<string>("Email")
                         .HasColumnType("longtext");
-
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("IE")
                         .HasColumnType("longtext");

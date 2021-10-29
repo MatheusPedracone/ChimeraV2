@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Chimera_v2.Business;
 using Chimera_v2.DTOs;
 using Chimera_v2.Repository.Users;
 using Chimera_v2.Services;
@@ -8,21 +9,21 @@ namespace Chimera_v2.Controllers
 {
     public class UserController : Controller
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUserBusiness _userBusiness;
         private readonly ITokenService _tokenService;
-        public UserController(IUserRepository userRepository, ITokenService tokenService)
+        public UserController(IUserBusiness userBusiness, ITokenService tokenService)
         {
-            _userRepository = userRepository;
+            _userBusiness = userBusiness;
             _tokenService = tokenService;
         }
 
         [HttpPost]
         [Route("login")]
-        public async Task<ActionResult<string>> Login([FromBody] UserDTO model)
+        public IActionResult Login([FromBody] UserDTO userDto)
         {
-            var userLogin = await _userRepository.GetUserByUsername(model.Username);
-            userLogin.Password = model.Password;
-            var user = await _userRepository.ValidateUser(userLogin);
+            var userLogin = _userBusiness.FindByUserName(userDto.Username);
+            userLogin.Password = userDto.Password;
+            var user = _userBusiness.Login(userLogin);
 
             //verifica se o usuário existe
             if (user == default)
@@ -37,16 +38,32 @@ namespace Chimera_v2.Controllers
 
         [HttpPost]
         [Route("signup")]
-        public async Task<ActionResult<string>> Signup([FromBody] UserDTO model)
+        public IActionResult Signup([FromBody] UserDTO userDto)
         {
             // Recupera o usuário
-            var user = await _userRepository.CreateUser(model);
+            var user = _userBusiness.Singnup(userDto);
 
             // Gera o Token
             var token = _tokenService.GenerateToken(user);
 
             //retorna os dados
-            return token;
+            return Ok(token);
+        }
+
+        [HttpGet]
+        [Route("FindAll")]
+        public ActionResult FindAll()
+        {
+            return Ok(_userBusiness.FindAll());
+        }
+
+        [HttpGet]
+        [Route("{userName}")]
+        public ActionResult Get(string userName)
+        {
+            var user = _userBusiness.FindByUserName(userName);
+            if (user == null) return NotFound();
+            return Ok(user);
         }
     }
 }

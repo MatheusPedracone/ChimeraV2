@@ -45,14 +45,7 @@ namespace Chimera_v2.Controllers
             var client = _clientBusiness.Update(clientDto);
             return Ok(client);
         }
-
-        [HttpPatch("{id}")]
-        public ActionResult Patch([FromBody] Guid id)
-        {
-           var client = _clientBusiness.Disable(id);
-            return Ok(client);
-        }
-
+        
         [HttpDelete("{id}")]
         public ActionResult Delete(Guid id)
         {

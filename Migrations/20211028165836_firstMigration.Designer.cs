@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Chimera_v2.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20211028115528_secondMigration")]
-    partial class secondMigration
+    [Migration("20211028165836_firstMigration")]
+    partial class firstMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

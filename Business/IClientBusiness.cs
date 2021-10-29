@@ -8,7 +8,7 @@ namespace Chimera_v2.Business
     public interface IClientBusiness
     {
         List<ClientDTO> FindAll();
-       ClientDTO FindById(Guid id);
+        ClientDTO FindById(Guid id);
         ClientDTO Create(ClientDTO clientDto);
         ClientDTO Update(ClientDTO clientDto);
         ClientDTO Disable(Guid id);

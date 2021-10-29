@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "GXFLVKJtsPzIQhBGaHABG22Jf/OTTKcWKoR2OAQXCD/gfproJQOdv+KlyH8/LfzvFY4b877rPYbu8+Souq/OTA==",
+  "dgSpecHash": "uALzDsPEUJoqs1hdQsf8SxiMPbVQ5tA5QiK909t0cX5vOjfMPJZIXz6o01i85BpWm0jRkp1WnQX4IpDM6HZmdg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\matheus\\Desktop\\Chimera-v2\\Chimera-v2.csproj",
+  "projectFilePath": "C:\\Users\\matheus\\Desktop\\Projeto-ReactRest\\Chimera-v2\\Chimera-v2.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\matheus\\.nuget\\packages\\bcrypt.net-next\\4.0.2\\bcrypt.net-next.4.0.2.nupkg.sha512",
     "C:\\Users\\matheus\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",

@@ -1,12 +1,11 @@
 using System.Linq;
 using System.Security.Authentication;
-using System.Threading.Tasks;
 using Chimera_v2.DTOs;
 using Chimera_v2.Data;
 using Chimera_v2.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using System;
+using System.Collections.Generic;
 
 namespace Chimera_v2.Repository.Users
 {
@@ -18,20 +17,28 @@ namespace Chimera_v2.Repository.Users
         {
             _context = context;
         }
-
-        public async Task<UserDTO> GetUserByUsername(string userName)
+        public List<UserDTO> GetAllUsers()
         {
-            return await _context.Users.AsNoTracking().Select(x => new UserDTO
+            return _context.Users.Select(c => new UserDTO
+            {
+                Username = c.Username,
+                Password = c.Password
+            })
+            .ToList();
+        }
+        public UserDTO GetUserByName(string Username)
+        {
+            return _context.Users.AsNoTracking().Select(x => new UserDTO
             {
                 Username = x.Username,
-                Password = x.Password,
+                Password = x.Password
             })
-                .FirstOrDefaultAsync(x => x.Username == userName);
+                .FirstOrDefault(x => x.Username == Username);
         }
-
-        public async Task<UserDTO> ValidateUser(UserDTO userDto)
+        public UserDTO Login(UserDTO userDto)
         {
-            var validateUser = await GetUserByUsername(userDto.Username);
+            var validateUser = _context.Users.FirstOrDefault(u => u.Username == userDto.Username);
+
             if (BCrypt.Net.BCrypt.EnhancedVerify(userDto.Password, validateUser.Password))
             {
                 return new UserDTO
@@ -42,61 +49,25 @@ namespace Chimera_v2.Repository.Users
             }
             throw new AuthenticationException();
         }
-
-        public async Task<UserDTO> CreateUser(UserDTO userDto)
+        public UserDTO Signup(UserDTO userDto)
         {
-            var userCreate = await GetUserByUsername(userDto.Username);
+            var userCreate = _context.Users.FirstOrDefault(u => u.Username == userDto.Username);
             if (userCreate != default)
             {
                 throw new BadHttpRequestException("User already existis!");
             }
 
-            await _context.Users.AddAsync(new User
+            _context.Users.Add(new User
             {
                 Username = userDto.Username,
                 Password = BCrypt.Net.BCrypt.EnhancedHashPassword(userDto.Password)
             });
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             return new UserDTO
             {
                 Username = userDto.Username,
                 Password = userDto.Password
             };
-        }
-
-        public async Task<User> GetUserByUsernameTracking(string userName)
-        {
-            return await _context.Users
-                .FirstOrDefaultAsync(u => u.Username == userName);
-        }
-
-        public async Task<UserDTO> UpdateUser(UserDTO userDto)
-        {
-            var user = await GetUserByUsername(userDto.Username);
-
-            if (user == default)
-            {
-                return default;
-            }
-            user.Username = userDto.Username;
-            user.Password = userDto.Password;
-            await _context.SaveChangesAsync();
-            return new UserDTO()
-            {
-                Username = userDto.Username,
-                Password = BCrypt.Net.BCrypt.EnhancedHashPassword(userDto.Password)
-            };
-        }
-          public async Task<User> GetUserByIdTracking(Guid guid)
-        {
-            return await _context.Users
-                .FirstOrDefaultAsync(u => u.Id == guid);
-        }
-        public async Task DeleteUser(Guid guid)
-        {
-            var userEntity = await GetUserByIdTracking(guid);
-            _context.Users.Remove(userEntity);
-            await _context.SaveChangesAsync();
         }
     }
 }
