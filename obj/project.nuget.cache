@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "uALzDsPEUJoqs1hdQsf8SxiMPbVQ5tA5QiK909t0cX5vOjfMPJZIXz6o01i85BpWm0jRkp1WnQX4IpDM6HZmdg==",
+  "dgSpecHash": "8VQuyCL+ZBOGfWn5+Mq2FoOKTIwJYZ5u5cwctM4n4nKCqPOIZ4SsiReguGF5HCd3qcU/QC+O9Te3GwfStEzmEg==",
   "success": true,
   "projectFilePath": "C:\\Users\\matheus\\Desktop\\Projeto-ReactRest\\Chimera-v2\\Chimera-v2.csproj",
   "expectedPackageFiles": [
@@ -41,6 +41,7 @@
     "C:\\Users\\matheus\\.nuget\\packages\\microsoft.aspnetcore.mvc.razor.extensions\\2.2.0\\microsoft.aspnetcore.mvc.razor.extensions.2.2.0.nupkg.sha512",
     "C:\\Users\\matheus\\.nuget\\packages\\microsoft.aspnetcore.mvc.razorpages\\2.2.0\\microsoft.aspnetcore.mvc.razorpages.2.2.0.nupkg.sha512",
     "C:\\Users\\matheus\\.nuget\\packages\\microsoft.aspnetcore.mvc.taghelpers\\2.2.0\\microsoft.aspnetcore.mvc.taghelpers.2.2.0.nupkg.sha512",
+    "C:\\Users\\matheus\\.nuget\\packages\\microsoft.aspnetcore.mvc.versioning\\5.0.0\\microsoft.aspnetcore.mvc.versioning.5.0.0.nupkg.sha512",
     "C:\\Users\\matheus\\.nuget\\packages\\microsoft.aspnetcore.mvc.viewfeatures\\2.2.0\\microsoft.aspnetcore.mvc.viewfeatures.2.2.0.nupkg.sha512",
     "C:\\Users\\matheus\\.nuget\\packages\\microsoft.aspnetcore.razor\\2.2.0\\microsoft.aspnetcore.razor.2.2.0.nupkg.sha512",
     "C:\\Users\\matheus\\.nuget\\packages\\microsoft.aspnetcore.razor.design\\2.2.0\\microsoft.aspnetcore.razor.design.2.2.0.nupkg.sha512",

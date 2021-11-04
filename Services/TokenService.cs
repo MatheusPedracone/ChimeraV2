@@ -24,6 +24,7 @@ namespace Chimera_v2.Services
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new(ClaimTypes.Name, user.Username),
+                    new(ClaimTypes.Role, user.Role.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddHours(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

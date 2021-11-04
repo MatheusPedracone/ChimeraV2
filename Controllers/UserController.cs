@@ -1,12 +1,15 @@
 using System.Threading.Tasks;
 using Chimera_v2.Business;
 using Chimera_v2.DTOs;
-using Chimera_v2.Repository.Users;
 using Chimera_v2.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Chimera_v2.Controllers
 {
+    [ApiVersion("1")]
+    [ApiController]
+    [Route("api/[controller]/v{version:apiVersion}")]
     public class UserController : Controller
     {
         private readonly IUserBusiness _userBusiness;
@@ -19,39 +22,72 @@ namespace Chimera_v2.Controllers
 
         [HttpPost]
         [Route("login")]
-        public IActionResult Login([FromBody] UserDTO userDto)
+        public async Task<ActionResult<dynamic>> Login([FromBody] UserDTO userDto)
         {
-            var userLogin = _userBusiness.FindByUserName(userDto.Username);
-            userLogin.Password = userDto.Password;
-            var user = _userBusiness.Login(userLogin);
+            try
+            {
+                var userLogin = _userBusiness.FindByUserName(userDto.Username);
+                if (userLogin == null)
+                {
+                    return NotFound(new { Erro = "Usuário não encontrado!" });
+                }
+                else
+                {
+                    if (BCrypt.Net.BCrypt.EnhancedVerify(userDto.Password, userLogin.Password))
+                    {
+                        userLogin.Password = userDto.Password;
+                        var user = _userBusiness.Login(userLogin);
+                        //gera o token
+                        var token = _tokenService.GenerateToken(user);
+                        user.Password = "";
 
-            //verifica se o usuário existe
-            if (user == default)
-                return NotFound(new { message = "Usuário ou senha inválidos" });
-
-            //gera o token
-            var token = _tokenService.GenerateToken(user);
-
-            //retorna os dados
-            return Ok(token);
+                        //Retorna os dados
+                        return new
+                        {
+                            user = userDto,
+                            token = token,
+                            mesangem = "Autenticado com sucesso!"
+                        };
+                    }
+                    else
+                    {
+                        return NotFound(new { Erro = "Senha inválida!" });
+                    }
+                }
+            }
+            catch (System.Exception)
+            {
+                return BadRequest(new { Erro = "Não foi possível realizar o login" });
+            }
         }
-
+        
         [HttpPost]
         [Route("signup")]
-        public IActionResult Signup([FromBody] UserDTO userDto)
+        public async Task<ActionResult<dynamic>> Signup([FromBody] UserDTO user)
         {
-            // Recupera o usuário
-            var user = _userBusiness.Singnup(userDto);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { Erro = "Por favor verifique os dados digitados!" });
+            }
 
-            // Gera o Token
-            var token = _tokenService.GenerateToken(user);
-
-            //retorna os dados
-            return Ok(token);
+            try
+            {
+                user.Role = "Usuário";
+                _userBusiness.Singnup(user);
+            }
+            catch (System.Exception)
+            {
+                return BadRequest(new { Erro = "Não foi possível se conectar com o banco de dados!" });
+            }
+            return new
+            {
+                mensagem = "Usuário cadastrado com sucesso!"
+            };
         }
 
         [HttpGet]
         [Route("FindAll")]
+        [Authorize]
         public ActionResult FindAll()
         {
             return Ok(_userBusiness.FindAll());
@@ -59,6 +95,7 @@ namespace Chimera_v2.Controllers
 
         [HttpGet]
         [Route("{userName}")]
+        [Authorize]
         public ActionResult Get(string userName)
         {
             var user = _userBusiness.FindByUserName(userName);

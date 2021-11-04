@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Chimera_v2.Data;
 using Chimera_v2.DTOs;
 using Chimera_v2.Models;
@@ -53,7 +52,6 @@ namespace Chimera_v2.Repository.Clients
                    }
                })
                .FirstOrDefault();
-
             return client ?? null;
         }
         public List<ClientDTO> GetAllClients()
@@ -83,12 +81,15 @@ namespace Chimera_v2.Repository.Clients
         }
         public ClientDTO CreateClient(ClientDTO clientDto)
         {
+            // crio a variavel que vai buscar o client pelo Name
             var client = GetByNameTracking(clientDto.Name);
 
+            // vejo se esse client já existe
             if (client != default)
             {
-                throw new BadHttpRequestException("Client already existis!");
+                throw new BadHttpRequestException("Client already exists!");
             }
+            // crio o novo client convertendo pra Dto
             _context.Clients.Add(new Client
             {
                 Name = clientDto.Name,
@@ -108,27 +109,11 @@ namespace Chimera_v2.Repository.Clients
                     UF = clientDto.Adress.UF
                 }
             });
+            // salvo o novo client
             _context.SaveChanges();
 
-            return new ClientDTO
-            {
-                Name = client.Name,
-                CPF = client.CPF,
-                IE = client.IE,
-                ContributorType = client.ContributorType,
-                Email = client.Email,
-                Phone = client.Phone,
-                Enabled = client.Enabled,
-                Adress = new AdressDTO
-                {
-                    ZipCode = client.Adress.ZipCode,
-                    Street = client.Adress.Street,
-                    District = client.Adress.District,
-                    County = client.Adress.County,
-                    AdressNumber = client.Adress.AdressNumber,
-                    UF = client.Adress.UF
-                }
-            };
+            // retorno o novo client que foi criado
+            return clientDto ?? null;
         }
         public ClientDTO UpdateClient(ClientDTO clientDto)
         {
@@ -172,8 +157,7 @@ namespace Chimera_v2.Repository.Clients
                 }
             }
             _context.SaveChanges();
-         
-         return new ClientDTO
+            return new ClientDTO
             {
                 Name = clientDto.Name,
                 CPF = clientDto.CPF,
@@ -192,9 +176,7 @@ namespace Chimera_v2.Repository.Clients
                     UF = clientDto.Adress.UF
                 }
             };
-            
         }
-
         public ClientDTO Disable(Guid id)
         {
             if (!_context.Clients.Any(c => c.Id.Equals(id))) return null;
@@ -241,7 +223,6 @@ namespace Chimera_v2.Repository.Clients
 
             _context.Remove(client);
             _context.SaveChanges();
-
         }
     }
 }

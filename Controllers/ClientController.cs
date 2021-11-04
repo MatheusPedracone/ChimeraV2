@@ -1,13 +1,13 @@
 using System;
-using System.Threading.Tasks;
 using Chimera_v2.Business;
 using Chimera_v2.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Chimera_v2.Controllers
 {
+    [ApiVersion("1")]
     [ApiController]
-    [Route("api/[controller]/v2")]
+    [Route("api/[controller]/v{version:apiVersion}")]
     public class ClientController : ControllerBase
     {
         private readonly IClientBusiness _clientBusiness;
@@ -17,35 +17,62 @@ namespace Chimera_v2.Controllers
             _clientBusiness = clientBusiness;
         }
 
+        // busca todos os clients
         [HttpGet]
         public ActionResult Get()
         {
-            return Ok(_clientBusiness.FindAll());
+            var clients = _clientBusiness.FindAll();
+            if (clients == null)
+            {
+                return NotFound(new { erro = "Nenhum cliente encontrado!" });
+            }
+            return Ok(clients);
         }
 
+        // busca um client pelo id
         [HttpGet("{id}")]
         public ActionResult Get(Guid id)
         {
             var client = _clientBusiness.FindById(id);
-            if (client == null) return NotFound();
+            if (client == null)
+            {
+                return NotFound(new { erro = "Cliente não encontrado!" });
+            }
             return Ok(client);
         }
 
+        //criação de um novo client
         [HttpPost]
         public ActionResult Post([FromBody] ClientDTO clientDto)
         {
             if (clientDto == null) return BadRequest();
-            return Ok(_clientBusiness.Create(clientDto));
+            try
+            {
+                var newClientDto = _clientBusiness.Create(clientDto);
+                return Ok(newClientDto);
+            }
+            catch (Exception)
+            {
+                return BadRequest(new { Erro = "Já existe um Cliente cadastrado com esse nome!" });
+            }
         }
 
+        // atualização de um client
         [HttpPut]
         public ActionResult Put([FromBody] ClientDTO clientDto)
         {
             if (clientDto.Adress.Guid == null) return BadRequest();
-            var client = _clientBusiness.Update(clientDto);
-            return Ok(client);
+            try
+            {
+                var client = _clientBusiness.Update(clientDto);
+                return Ok(client);
+            }
+            catch (Exception)
+            {
+                return BadRequest(new { Erro = "Erro ao tentar atualizar as informações do cliente!" });
+            }
         }
-        
+
         [HttpDelete("{id}")]
         public ActionResult Delete(Guid id)
         {

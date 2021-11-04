@@ -19,21 +19,22 @@ namespace Chimera_v2.Repository.Users
         }
         public List<UserDTO> GetAllUsers()
         {
-            return _context.Users.Select(c => new UserDTO
+            return _context.Users.Select(u => new UserDTO
             {
-                Username = c.Username,
-                Password = c.Password
+                Username = u.Username,
+                Password = u.Password,
+                Role = u.Role,
             })
             .ToList();
         }
         public UserDTO GetUserByName(string Username)
         {
-            return _context.Users.AsNoTracking().Select(x => new UserDTO
+            return _context.Users.AsNoTracking().Select(u => new UserDTO
             {
-                Username = x.Username,
-                Password = x.Password
+                Username = u.Username,
+                Password = u.Password
             })
-                .FirstOrDefault(x => x.Username == Username);
+                .FirstOrDefault(u => u.Username == Username);
         }
         public UserDTO Login(UserDTO userDto)
         {
@@ -44,7 +45,8 @@ namespace Chimera_v2.Repository.Users
                 return new UserDTO
                 {
                     Username = validateUser.Username,
-                    Password = validateUser.Password
+                    Password = validateUser.Password,
+                    Role = validateUser.Role
                 };
             }
             throw new AuthenticationException();
@@ -54,19 +56,20 @@ namespace Chimera_v2.Repository.Users
             var userCreate = _context.Users.FirstOrDefault(u => u.Username == userDto.Username);
             if (userCreate != default)
             {
-                throw new BadHttpRequestException("User already existis!");
+                throw new BadHttpRequestException("User already exists!");
             }
-
             _context.Users.Add(new User
             {
                 Username = userDto.Username,
-                Password = BCrypt.Net.BCrypt.EnhancedHashPassword(userDto.Password)
+                Password = BCrypt.Net.BCrypt.EnhancedHashPassword(userDto.Password),
+                Role = userDto.Role
             });
             _context.SaveChanges();
             return new UserDTO
             {
                 Username = userDto.Username,
-                Password = userDto.Password
+                Password = userDto.Password,
+                Role = userDto.Role
             };
         }
     }

@@ -36,6 +36,7 @@ namespace Chimera_v2
             services.AddDbContextPool<AppDbContext>(options => options.UseMySql(mySqlConnection, ServerVersion.AutoDetect(mySqlConnection)));
 
             var key = Encoding.ASCII.GetBytes(Configuration.GetSection("Secret").Value);
+            
             services.AddAuthentication(x =>
                 {
                     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -59,10 +60,13 @@ namespace Chimera_v2
             services.AddControllers().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
+            services.AddApiVersioning();
+
             services.AddScoped<IClientBusiness, ClientBusinessImplementations>();
+            services.AddScoped<IClientRepository, ClientRepository>();
+
             services.AddScoped<IUserBusiness, UserBusinessImplementation>();
             services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IClientRepository, ClientRepository>();
 
             services.AddScoped<ITokenService, TokenService>();
 
@@ -95,6 +99,8 @@ namespace Chimera_v2
 
             app.UseRouting();
 
+            app.UseAuthentication();
+            
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
