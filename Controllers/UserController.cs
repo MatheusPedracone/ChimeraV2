@@ -35,7 +35,6 @@ namespace Chimera_v2.Controllers
                 {
                     if (BCrypt.Net.BCrypt.EnhancedVerify(userDto.Password, userLogin.Password))
                     {
-                        userLogin.Password = userDto.Password;
                         var user = _userBusiness.Login(userLogin);
                         //gera o token
                         var token = _tokenService.GenerateToken(user);
@@ -44,7 +43,7 @@ namespace Chimera_v2.Controllers
                         //Retorna os dados
                         return new
                         {
-                            user = userDto,
+                            user = user,
                             token = token,
                             mesangem = "Autenticado com sucesso!"
                         };
@@ -60,10 +59,9 @@ namespace Chimera_v2.Controllers
                 return BadRequest(new { Erro = "Não foi possível realizar o login" });
             }
         }
-        
         [HttpPost]
         [Route("signup")]
-        public async Task<ActionResult<dynamic>> Signup([FromBody] UserDTO user)
+        public async Task<ActionResult<dynamic>> Signup([FromBody] UserDTO userDto)
         {
             if (!ModelState.IsValid)
             {
@@ -72,8 +70,8 @@ namespace Chimera_v2.Controllers
 
             try
             {
-                user.Role = "Usuário";
-                _userBusiness.Singnup(user);
+                userDto.Role = "Usuário";
+                _userBusiness.Singnup(userDto);
             }
             catch (System.Exception)
             {

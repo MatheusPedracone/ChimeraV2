@@ -1,6 +1,7 @@
 using System;
 using Chimera_v2.Business;
 using Chimera_v2.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Chimera_v2.Controllers
@@ -19,6 +20,8 @@ namespace Chimera_v2.Controllers
 
         // busca todos os clients
         [HttpGet]
+        [Authorize]
+
         public ActionResult Get()
         {
             var clients = _clientBusiness.FindAll();
@@ -31,6 +34,8 @@ namespace Chimera_v2.Controllers
 
         // busca um client pelo id
         [HttpGet("{id}")]
+        [Authorize]
+
         public ActionResult Get(Guid id)
         {
             var client = _clientBusiness.FindById(id);
@@ -43,6 +48,8 @@ namespace Chimera_v2.Controllers
 
         //criação de um novo client
         [HttpPost]
+        [Authorize]
+
         public ActionResult Post([FromBody] ClientDTO clientDto)
         {
             if (clientDto == null) return BadRequest();
@@ -59,6 +66,8 @@ namespace Chimera_v2.Controllers
 
         // atualização de um client
         [HttpPut]
+        [Authorize]
+
         public ActionResult Put([FromBody] ClientDTO clientDto)
         {
             if (clientDto.Adress.Guid == null) return BadRequest();
@@ -74,6 +83,8 @@ namespace Chimera_v2.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
+
         public ActionResult Delete(Guid id)
         {
             _clientBusiness.Delete(id);
