@@ -36,7 +36,6 @@ namespace Chimera_v2
             services.AddDbContextPool<AppDbContext>(options => options.UseMySql(mySqlConnection, ServerVersion.AutoDetect(mySqlConnection)));
 
             var key = Encoding.ASCII.GetBytes(Configuration.GetSection("Secret").Value);
-            
             services.AddAuthentication(x =>
                 {
                     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

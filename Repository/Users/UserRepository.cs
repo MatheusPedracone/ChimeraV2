@@ -17,6 +17,15 @@ namespace Chimera_v2.Repository.Users
         {
             _context = context;
         }
+        public UserDTO FindUser(UserDTO userDto)
+        {
+            return _context.Users.AsNoTracking().Select(u => new UserDTO
+            {
+                Username = u.Username,
+                Password = u.Password,
+                Role = u.Role
+            }).FirstOrDefault();
+        }
         public List<UserDTO> GetAllUsers()
         {
             return _context.Users.Select(u => new UserDTO
@@ -27,14 +36,15 @@ namespace Chimera_v2.Repository.Users
             })
             .ToList();
         }
-        public UserDTO GetUserByName(string Username)
+        public UserDTO GetUserByName(string userName)
         {
             return _context.Users.AsNoTracking().Select(u => new UserDTO
             {
                 Username = u.Username,
-                Password = u.Password
+                Password = u.Password,
+                Role = u.Role
             })
-                .FirstOrDefault(u => u.Username == Username);
+            .FirstOrDefault();
         }
         public UserDTO Login(UserDTO userDto)
         {

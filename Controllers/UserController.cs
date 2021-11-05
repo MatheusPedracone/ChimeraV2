@@ -9,7 +9,7 @@ namespace Chimera_v2.Controllers
 {
     [ApiVersion("1")]
     [ApiController]
-    [Route("api/[controller]/v{version:apiVersion}")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class UserController : Controller
     {
         private readonly IUserBusiness _userBusiness;
@@ -26,32 +26,26 @@ namespace Chimera_v2.Controllers
         {
             try
             {
-                var userLogin = _userBusiness.FindByUserName(userDto.Username);
-                if (userLogin == null)
+                var userLogin = _userBusiness.FindUser(userDto);
+
+                if (userLogin == null || BCrypt.Net.BCrypt.EnhancedVerify(userDto.Password, userLogin.Password))
                 {
-                    return NotFound(new { Erro = "Usuário não encontrado!" });
+                    //gera o token
+                    var user = _userBusiness.Login(userLogin);
+
+                    var token = _tokenService.GenerateToken(user);
+                    user.Password = "";
+                    //Retorna os dados
+                    return new
+                    {
+                        user = user,
+                        token = token,
+                        mesangem = "Autenticado com sucesso!"
+                    };
                 }
                 else
                 {
-                    if (BCrypt.Net.BCrypt.EnhancedVerify(userDto.Password, userLogin.Password))
-                    {
-                        var user = _userBusiness.Login(userLogin);
-                        //gera o token
-                        var token = _tokenService.GenerateToken(user);
-                        user.Password = "";
-
-                        //Retorna os dados
-                        return new
-                        {
-                            user = user,
-                            token = token,
-                            mesangem = "Autenticado com sucesso!"
-                        };
-                    }
-                    else
-                    {
-                        return NotFound(new { Erro = "Senha inválida!" });
-                    }
+                    return NotFound(new { Erro = "Usuário ou senha inválidos!" });
                 }
             }
             catch (System.Exception)
@@ -79,6 +73,7 @@ namespace Chimera_v2.Controllers
             }
             return new
             {
+                user = userDto,
                 mensagem = "Usuário cadastrado com sucesso!"
             };
         }
@@ -91,14 +86,14 @@ namespace Chimera_v2.Controllers
             return Ok(_userBusiness.FindAll());
         }
 
-        [HttpGet]
-        [Route("{userName}")]
-        [Authorize]
-        public ActionResult Get(string userName)
-        {
-            var user = _userBusiness.FindByUserName(userName);
-            if (user == null) return NotFound();
-            return Ok(user);
-        }
+        // [HttpGet]
+        // [Route("{userName}")]
+        // [Authorize]
+        // public ActionResult Get(string userName)
+        // {
+        //     var user = _userBusiness.FindByUserName(userName);
+        //     if (user == null) return NotFound();
+        //     return Ok(user);
+        // }
     }
 }

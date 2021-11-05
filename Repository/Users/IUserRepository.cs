@@ -8,6 +8,7 @@ namespace Chimera_v2.Repository.Users
     {
         UserDTO GetUserByName(string userName);
         List<UserDTO> GetAllUsers();
+        UserDTO FindUser(UserDTO userDto);
         UserDTO Login(UserDTO userDto);
         UserDTO Signup(UserDTO userDto);
     }

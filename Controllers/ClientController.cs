@@ -49,7 +49,6 @@ namespace Chimera_v2.Controllers
         //criação de um novo client
         [HttpPost]
         [Authorize]
-
         public ActionResult Post([FromBody] ClientDTO clientDto)
         {
             if (clientDto == null) return BadRequest();

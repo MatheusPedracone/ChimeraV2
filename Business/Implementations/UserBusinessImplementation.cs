@@ -17,16 +17,18 @@ namespace Chimera_v2.Business.Implementations
         {
             return _repository.GetAllUsers();
         }
-        public UserDTO FindByUserName(string userName)
+        public UserDTO FindByUserName(string Username)
         {
-             return _repository.GetUserByName(userName);
+            return _repository.GetUserByName(Username);
         }
-
+        public UserDTO FindUser(UserDTO userDto)
+        {
+            return _repository.FindUser(userDto);
+        }
         public UserDTO Login(UserDTO userDto)
         {
             return _repository.Login(userDto);
         }
-
         public UserDTO Singnup(UserDTO userDto)
         {
             return _repository.Signup(userDto);

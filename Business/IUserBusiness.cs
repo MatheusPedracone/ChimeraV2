@@ -7,7 +7,8 @@ namespace Chimera_v2.Business
     public interface IUserBusiness
     {
         List<UserDTO> FindAll();
-        UserDTO FindByUserName(string userName);
+        UserDTO FindByUserName(string Username);
+        UserDTO FindUser(UserDTO userDto);
         UserDTO Login(UserDTO userDto);
         UserDTO Singnup(UserDTO userDto);
     }
