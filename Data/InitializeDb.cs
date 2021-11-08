@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Chimera_v2.Models;
 using Microsoft.EntityFrameworkCore;
-
+using BC = BCrypt.Net.BCrypt;
 namespace Chimera_v2.Data
 {
     public static class  InitializeDb
@@ -17,7 +17,7 @@ namespace Chimera_v2.Data
             {
                 Id = Guid.NewGuid(),
                 Username = "Jorge",
-                Password = BCrypt.Net.BCrypt.EnhancedHashPassword("testesenha123"),
+                Password = BC.EnhancedHashPassword("testesenha123"),
                 Role = "Admin"
             };
             context.Add(user);
