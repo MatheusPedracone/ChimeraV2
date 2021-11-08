@@ -13,11 +13,11 @@ namespace Chimera_v2.Data
 
             if(context.Users.Any()) return;
 
-            var user = new User 
+            var user = new User
             {
                 Id = Guid.NewGuid(),
                 Username = "Jorge",
-                Password = BC.EnhancedHashPassword("testesenha123"),
+                Password = BC.HashPassword("testesenha123"),
                 Role = "Admin"
             };
             context.Add(user);

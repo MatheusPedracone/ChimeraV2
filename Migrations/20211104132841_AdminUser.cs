@@ -8,8 +8,8 @@ namespace Chimera_v2.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            string sql = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).FullName, "./Chimera-V2/Migrations/20211104132841_AdminUser.sql");
-            migrationBuilder.Sql(File.ReadAllText(sql));
+            // string sql = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).FullName, "./Chimera-V2/Migrations/20211104132841_AdminUser.sql");
+            // migrationBuilder.Sql(File.ReadAllText(sql));
 
             migrationBuilder.AlterColumn<string>(
                 name: "Username",

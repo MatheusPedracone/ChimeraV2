@@ -21,7 +21,6 @@ namespace Chimera_v2.Controllers
         // busca todos os clients
         [HttpGet]
         [Authorize]
-
         public ActionResult Get()
         {
             var clients = _clientBusiness.FindAll();
