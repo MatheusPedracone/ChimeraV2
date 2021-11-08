@@ -26,33 +26,26 @@ namespace Chimera_v2.Controllers
 
         [HttpPost]
         [Route("login")]
-        public async Task<ActionResult<dynamic>> Login([FromBody] UserDTO userDto)
+        public async Task<ActionResult<dynamic>> Login([FromBody] UserLoginDto userLoginDto)
         {
             try
             {
                 //vou buscar o usuario por username
-                var user = _context
-                .Users
+                var userContext = _context.Users
                 .AsNoTracking()
-                .Select(u => new UserDTO
-                {
-                    Username = u.Username,
-                    Password = u.Password,
-                    Role = u.Role
-                })
-                .Where(u => u.Username == userDto.Username)
+                .Where(u => u.Username == userLoginDto.Username)
                 .FirstOrDefault();
 
                 //verifico se user existe 
-                if (user == null || BCrypt.Net.BCrypt.EnhancedVerify(userDto.Password, user.Password))
+                if (userContext == null || BCrypt.Net.BCrypt.EnhancedVerify(userLoginDto.Password, userContext.Password))
                 {
                     //gera o token
-                    var token = _tokenService.GenerateToken(user);
-                    user.Password = "";
+                    var token = _tokenService.GenerateToken(userContext);
+                    userContext.Password = "";
                     //Retorna os dados
                     return new
                     {
-                        user = user,
+                        userContext = new UserDTO { Username = userContext.Username, Password = "", Role = userContext.Role },
                         token = token,
                         mesangem = "Autenticado com sucesso!"
                     };
@@ -69,7 +62,7 @@ namespace Chimera_v2.Controllers
         }
         [HttpPost]
         [Route("signup")]
-        public async Task<ActionResult<dynamic>> Signup([FromBody] UserDTO userDto)
+        public async Task<ActionResult<dynamic>> Signup([FromBody] UserLoginDto userLoginDto)
         {
             if (!ModelState.IsValid)
             {
@@ -80,10 +73,10 @@ namespace Chimera_v2.Controllers
             {
                 _context.Users.Add(new User
                 {
-                    Username = userDto.Username,
-                    Password = BCrypt.Net.BCrypt.EnhancedHashPassword(userDto.Password),
-                    // Role = "Usuário"
-                    Role = "Admin"
+                    Username = userLoginDto.Username,
+                    Password = BCrypt.Net.BCrypt.EnhancedHashPassword(userLoginDto.Password),
+                    Role = "Usuário"
+                    // Role = "Admin"
                 });
 
                 _context.SaveChanges();
@@ -94,7 +87,7 @@ namespace Chimera_v2.Controllers
             }
             return new
             {
-                user = userDto,
+                user = userLoginDto,
                 mensagem = "Usuário cadastrado com sucesso!"
             };
         }
@@ -110,14 +103,14 @@ namespace Chimera_v2.Controllers
                  return Ok(users);
          }
 
-        // [HttpGet]
-        // [Route("{id}")]
-        // [Authorize(Roles = "Admin")]
-        // public ActionResult Get(Guid Id)
-        // {
-        //     var user = _context.Users.AsNoTracking().Where(u => u.Id == Id).ToList();
-        //     if (user == null) return NotFound();
-        //     return Ok(user);
-        // }
+        [HttpGet]
+        [Route("{id}")]
+        [Authorize(Roles = "Admin")]
+        public ActionResult Get(Guid Id)
+        {
+            var user = _context.Users.AsNoTracking().Where(u => u.Id == Id).ToList();
+            if (user == null) return NotFound();
+            return Ok(user);
+        }
     }
 }

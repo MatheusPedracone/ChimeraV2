@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Chimera_v2.DTOs;
+using Chimera_v2.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -15,7 +16,7 @@ namespace Chimera_v2.Services
         {
             _configuration = configuration;
         }
-        public string GenerateToken(UserDTO user)
+        public string GenerateToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration.GetSection("Secret").Value);
