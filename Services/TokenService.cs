@@ -26,7 +26,7 @@ namespace Chimera_v2.Services
                     new(ClaimTypes.Name, user.Username),
                     new(ClaimTypes.Role, user.Role.ToString())
                 }),
-                Expires = DateTime.UtcNow.AddHours(2),
+                Expires = DateTime.UtcNow.AddMinutes(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);

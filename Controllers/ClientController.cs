@@ -8,7 +8,7 @@ namespace Chimera_v2.Controllers
 {
     [ApiVersion("1")]
     [ApiController]
-    [Route("api/[controller]/v{version:apiVersion}")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class ClientController : ControllerBase
     {
         private readonly IClientBusiness _clientBusiness;

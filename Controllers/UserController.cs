@@ -1,9 +1,13 @@
+using System;
+using System.Linq;
 using System.Threading.Tasks;
-using Chimera_v2.Business;
+using Chimera_v2.Data;
 using Chimera_v2.DTOs;
+using Chimera_v2.Models;
 using Chimera_v2.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Chimera_v2.Controllers
 {
@@ -12,12 +16,12 @@ namespace Chimera_v2.Controllers
     [Route("api/v{version:apiVersion}/[controller]")]
     public class UserController : Controller
     {
-        private readonly IUserBusiness _userBusiness;
+        private readonly AppDbContext _context;
         private readonly ITokenService _tokenService;
-        public UserController(IUserBusiness userBusiness, ITokenService tokenService)
+        public UserController(AppDbContext context, ITokenService tokenService)
         {
-            _userBusiness = userBusiness;
             _tokenService = tokenService;
+            _context = context;
         }
 
         [HttpPost]
@@ -26,13 +30,23 @@ namespace Chimera_v2.Controllers
         {
             try
             {
-                var userLogin = _userBusiness.FindUser(userDto);
+                //vou buscar o usuario por username
+                var user = _context
+                .Users
+                .AsNoTracking()
+                .Select(u => new UserDTO
+                {
+                    Username = u.Username,
+                    Password = u.Password,
+                    Role = u.Role
+                })
+                .Where(u => u.Username == userDto.Username)
+                .FirstOrDefault();
 
-                if (userLogin == null || BCrypt.Net.BCrypt.EnhancedVerify(userDto.Password, userLogin.Password))
+                //verifico se user existe 
+                if (user == null || BCrypt.Net.BCrypt.EnhancedVerify(userDto.Password, user.Password))
                 {
                     //gera o token
-                    var user = _userBusiness.Login(userLogin);
-
                     var token = _tokenService.GenerateToken(user);
                     user.Password = "";
                     //Retorna os dados
@@ -64,8 +78,15 @@ namespace Chimera_v2.Controllers
 
             try
             {
-                userDto.Role = "Usuário";
-                _userBusiness.Singnup(userDto);
+                _context.Users.Add(new User
+                {
+                    Username = userDto.Username,
+                    Password = BCrypt.Net.BCrypt.EnhancedHashPassword(userDto.Password),
+                    // Role = "Usuário"
+                    Role = "Admin"
+                });
+
+                _context.SaveChanges();
             }
             catch (System.Exception)
             {
@@ -78,20 +99,23 @@ namespace Chimera_v2.Controllers
             };
         }
 
-        [HttpGet]
-        [Route("FindAll")]
-        [Authorize]
-        public ActionResult FindAll()
-        {
-            return Ok(_userBusiness.FindAll());
-        }
+         [HttpGet]
+         [Route("getAll")]
+         [Authorize(Roles = "Admin")]
+         public ActionResult GetAll()
+         {
+                 var users = _context.Users.AsNoTracking().ToList();
+                 if(users == null)
+                     return NotFound(new { erro = "Não foi encontrado nenhum usuário!"});
+                 return Ok(users);
+         }
 
         // [HttpGet]
-        // [Route("{userName}")]
-        // [Authorize]
-        // public ActionResult Get(string userName)
+        // [Route("{id}")]
+        // [Authorize(Roles = "Admin")]
+        // public ActionResult Get(Guid Id)
         // {
-        //     var user = _userBusiness.FindByUserName(userName);
+        //     var user = _context.Users.AsNoTracking().Where(u => u.Id == Id).ToList();
         //     if (user == null) return NotFound();
         //     return Ok(user);
         // }

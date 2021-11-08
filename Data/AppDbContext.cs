@@ -18,6 +18,10 @@ namespace Chimera_v2.Data
                 entity.HasOne(x => x.Adress)
                 .WithOne(x => x.Client)
                 .HasForeignKey<Adress>(x => x.ClientId));
+
+            builder.Entity<User>()
+              .HasIndex(user => user.Username)
+                .IsUnique();
         }
     }
 }
