@@ -17,7 +17,7 @@ namespace Chimera_v2.Data
             {
                 Id = Guid.NewGuid(),
                 Username = "Jorge",
-                Password = BC.HashPassword("testesenha123"),
+                Password = BC.HashPassword("123123"),
                 Role = "Admin"
             };
             context.Add(user);

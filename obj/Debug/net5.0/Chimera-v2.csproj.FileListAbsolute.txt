@@ -109,3 +109,4 @@ C:\Users\matheus\Desktop\Projeto-ReactRest\Chimera-v2\obj\Debug\net5.0\ref\Chime
 C:\Users\matheus\Desktop\Projeto-ReactRest\Chimera-v2\obj\Debug\net5.0\Chimera-v2.pdb
 C:\Users\matheus\Desktop\Projeto-ReactRest\Chimera-v2\obj\Debug\net5.0\Chimera-v2.genruntimeconfig.cache
 C:\Users\matheus\Desktop\Projeto-ReactRest\Chimera-v2\bin\Debug\net5.0\Microsoft.AspNetCore.Mvc.Versioning.dll
+C:\Users\matheus\Desktop\Projeto-ReactRest\Chimera-v2\obj\Debug\net5.0\Chimera-v2.csproj.CopyComplete

@@ -8,6 +8,8 @@ using Chimera_v2.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Chimera_v2.Business;
+using Microsoft.AspNetCore.Http;
 
 namespace Chimera_v2.Controllers
 {
@@ -18,72 +20,53 @@ namespace Chimera_v2.Controllers
     {
         private readonly AppDbContext _context;
         private readonly ITokenService _tokenService;
-        public UserController(AppDbContext context, ITokenService tokenService)
+        private readonly IUserBusiness _userBusiness;
+
+        public UserController(AppDbContext context, ITokenService tokenService, IUserBusiness userBusiness)
         {
             _tokenService = tokenService;
+            _userBusiness = userBusiness;
             _context = context;
         }
 
         [HttpPost]
-        [Route("login")]
+        [Route("Login")]
         public async Task<ActionResult<dynamic>> Login([FromBody] UserLoginDto userLoginDto)
         {
             try
             {
                 //vou buscar o usuario por username
-                var userContext = _context.Users
-                .AsNoTracking()
-                .Where(u => u.Username == userLoginDto.Username)
-                .FirstOrDefault();
+                var userContext = _userBusiness.GetUserByUserName(userLoginDto.Username);
+               if(userContext == null)
+               return Unauthorized(new { Erro = "Usuário ou senha inválidos!" });
 
-                //verifico se user existe 
-                if (userContext == null || BCrypt.Net.BCrypt.EnhancedVerify(userLoginDto.Password, userContext.Password))
-                {
-                    //gera o token
+                var userToLogin = _userBusiness.Login(userLoginDto);
                     var token = _tokenService.GenerateToken(userContext);
                     userContext.Password = "";
-                    //Retorna os dados
-                    return new
+                    return Ok (new
                     {
                         userContext = new UserDTO { Username = userContext.Username, Password = "", Role = userContext.Role },
                         token = token,
                         mesangem = "Autenticado com sucesso!"
-                    };
-                }
-                else
-                {
-                    return NotFound(new { Erro = "Usuário ou senha inválidos!" });
-                }
+                    });
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 return BadRequest(new { Erro = "Não foi possível realizar o login" });
             }
         }
-        [HttpPost]
-        [Route("signup")]
-        public async Task<ActionResult<dynamic>> Signup([FromBody] UserLoginDto userLoginDto)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(new { Erro = "Por favor verifique os dados digitados!" });
-            }
 
+        [HttpPost]
+        [Route("Register")]
+        public async Task<ActionResult<dynamic>> Register([FromBody] UserLoginDto userLoginDto)
+        {
             try
             {
-                _context.Users.Add(new User
-                {
-                    Username = userLoginDto.Username,
-                    Password = BCrypt.Net.BCrypt.EnhancedHashPassword(userLoginDto.Password),
-                    Role = "Usuário"
-                    // Role = "Admin"
-                });
-
-                _context.SaveChanges();
+                _userBusiness.Register(userLoginDto);
             }
             catch (System.Exception)
             {
-                return BadRequest(new { Erro = "Não foi possível se conectar com o banco de dados!" });
+                return BadRequest(new { Erro = "Erro ao tentar Registrar Usuário!" });
             }
             return new
             {
@@ -92,25 +75,39 @@ namespace Chimera_v2.Controllers
             };
         }
 
-         [HttpGet]
-         [Route("getAll")]
-         [Authorize(Roles = "Admin")]
-         public ActionResult GetAll()
-         {
-                 var users = _context.Users.AsNoTracking().ToList();
-                 if(users == null)
-                     return NotFound(new { erro = "Não foi encontrado nenhum usuário!"});
-                 return Ok(users);
-         }
+        [HttpGet]
+        [Route("getAll")]
+        [Authorize(Roles = "Admin")]
+        public ActionResult GetAll()
+        {
+            try
+            {
+                var users = _userBusiness.GetAllUsers();
+                if (users == null)
+                    return NotFound(new { erro = "Não foi encontrado nenhum usuário!" });
+                return Ok(users);
+            }
+            catch (Exception)
+            {
+                return BadRequest(new { Erro = "Não foi possível realizar o login" });
+            }
+        }
 
         [HttpGet]
         [Route("{id}")]
         [Authorize(Roles = "Admin")]
         public ActionResult Get(Guid Id)
         {
-            var user = _context.Users.AsNoTracking().Where(u => u.Id == Id).ToList();
-            if (user == null) return NotFound();
-            return Ok(user);
+            try
+            {
+                var user = _context.Users.AsNoTracking().Where(u => u.Id == Id).ToList();
+                if (user == null) return NotFound();
+                return Ok(user);
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
         }
     }
 }

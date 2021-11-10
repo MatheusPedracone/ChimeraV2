@@ -33,7 +33,6 @@ namespace Chimera_v2.Models
 
         [Required]
         public bool Enabled { get; set; }
-
         public Adress Adress { get; set; }
     }
 }

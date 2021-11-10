@@ -17,10 +17,9 @@ namespace Chimera_v2.Controllers
         {
             _clientBusiness = clientBusiness;
         }
-
         // busca todos os clients
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = "Admin")]        
         public ActionResult Get()
         {
             var clients = _clientBusiness.FindAll();
@@ -33,7 +32,7 @@ namespace Chimera_v2.Controllers
 
         // busca um client pelo id
         [HttpGet("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
 
         public ActionResult Get(Guid id)
         {
@@ -44,7 +43,6 @@ namespace Chimera_v2.Controllers
             }
             return Ok(client);
         }
-
         //criação de um novo client
         [HttpPost]
         [Authorize]
@@ -80,9 +78,9 @@ namespace Chimera_v2.Controllers
             }
         }
 
+        //deleção de um client
         [HttpDelete("{id}")]
         [Authorize]
-
         public ActionResult Delete(Guid id)
         {
             _clientBusiness.Delete(id);
