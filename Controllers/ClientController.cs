@@ -19,7 +19,7 @@ namespace Chimera_v2.Controllers
         }
         // busca todos os clients
         [HttpGet]
-        [Authorize(Roles = "Admin")]        
+        [Authorize(Roles = "Admin")]
         public ActionResult Get()
         {
             var clients = _clientBusiness.FindAll();
@@ -63,7 +63,6 @@ namespace Chimera_v2.Controllers
         // atualização de um client
         [HttpPut]
         [Authorize]
-
         public ActionResult Put([FromBody] ClientDTO clientDto)
         {
             if (clientDto.Adress.Guid == null) return BadRequest();

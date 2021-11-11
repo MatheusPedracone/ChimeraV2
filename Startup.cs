@@ -65,7 +65,6 @@ namespace Chimera_v2
             services.AddScoped<IUserBusiness, UserBusinessImplementations>();
             services.AddScoped<IUserRepository, UserRepository>();
 
-
             services.AddScoped<ITokenService, TokenService>();
             services.AddMvc();
             services.AddSwaggerGen(c =>

@@ -35,7 +35,16 @@ namespace Chimera_v2.Repository.Users
         }
         public UserDTO GetUserById(Guid id)
         {
-            throw new NotImplementedException();
+            var user = _context.Users
+            .Where(u => u.Id.Equals(id))
+            .Select(u => new UserDTO
+            {
+                Username = u.Username,
+                Password = u.Password,
+                Role = u.Role
+            })
+            .FirstOrDefault();
+            return user ?? null;
         }
         public User GetUserByUserName(string userName)
         {
@@ -101,12 +110,14 @@ namespace Chimera_v2.Repository.Users
         {
             try
             {
-                throw new NotImplementedException();
+                var user = GetUserByUserName(userLoginDto.Username);
+                if (user == null) return null;
             }
             catch (System.Exception ex)
             {
                 throw new Exception($"Erro ao tentar atualizar usuário. Erro: {ex.Message}");
             }
+            return null;
         }
         public void DeleteUser(Guid id)
         {

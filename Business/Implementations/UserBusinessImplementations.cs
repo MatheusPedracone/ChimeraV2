@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Chimera_v2.DTOs;
 using Chimera_v2.Models;
@@ -17,6 +18,10 @@ namespace Chimera_v2.Business.Implementations
         {
             return _repository.GetAllUsers();
         }
+        public UserDTO GetUserById(Guid id)
+        {
+            return _repository.GetUserById(id);
+        }
         public User GetUserByUserName(string userName)
         {
             return _repository.GetUserByUserName(userName);
@@ -25,15 +30,21 @@ namespace Chimera_v2.Business.Implementations
         {
             return _repository.ValidateCredentials(userLoginDto);
         }
-
         public UserLoginDto Register(UserLoginDto userLoginDto)
         {
             return _repository.CreateUser(userLoginDto);
         }
-
+        public UserLoginDto UpdateUser(UserLoginDto userLoginDto)
+        {
+            throw new NotImplementedException();
+        }
+         public void DeleteUser(Guid id)
+        {
+            _repository.DeleteUser(id);
+        }
         public bool UserExists(string userName)
         {
-            return  _repository.UserExists(userName);
+            return _repository.UserExists(userName);
         }
     }
 }

@@ -18,15 +18,13 @@ namespace Chimera_v2.Controllers
     [Route("api/v{version:apiVersion}/[controller]")]
     public class UserController : Controller
     {
-        private readonly AppDbContext _context;
         private readonly ITokenService _tokenService;
         private readonly IUserBusiness _userBusiness;
 
-        public UserController(AppDbContext context, ITokenService tokenService, IUserBusiness userBusiness)
+        public UserController(ITokenService tokenService, IUserBusiness userBusiness)
         {
             _tokenService = tokenService;
             _userBusiness = userBusiness;
-            _context = context;
         }
 
         [HttpPost]
@@ -35,20 +33,19 @@ namespace Chimera_v2.Controllers
         {
             try
             {
-                //vou buscar o usuario por username
                 var userContext = _userBusiness.GetUserByUserName(userLoginDto.Username);
-               if(userContext == null)
-               return Unauthorized(new { Erro = "Usuário ou senha inválidos!" });
+                if (userContext == null)
+                    return Unauthorized(new { Erro = "Usuário ou senha inválidos!" });
 
                 var userToLogin = _userBusiness.Login(userLoginDto);
-                    var token = _tokenService.GenerateToken(userContext);
-                    userContext.Password = "";
-                    return Ok (new
-                    {
-                        userContext = new UserDTO { Username = userContext.Username, Password = "", Role = userContext.Role },
-                        token = token,
-                        mesangem = "Autenticado com sucesso!"
-                    });
+                var token = _tokenService.GenerateToken(userContext);
+                userContext.Password = "";
+                return Ok(new
+                {
+                    userContext = new UserDTO { Username = userContext.Username, Password = "", Role = userContext.Role },
+                    token = token,
+                    mesangem = "Autenticado com sucesso!"
+                });
             }
             catch (Exception)
             {
@@ -89,24 +86,39 @@ namespace Chimera_v2.Controllers
             }
             catch (Exception)
             {
-                return BadRequest(new { Erro = "Não foi possível realizar o login" });
+                return BadRequest(new { Erro = "Não foi possível buscar usuário" });
             }
         }
 
-        [HttpGet]
-        [Route("{id}")]
+        [HttpGet("{id}")]
         [Authorize(Roles = "Admin")]
         public ActionResult Get(Guid Id)
         {
             try
             {
-                var user = _context.Users.AsNoTracking().Where(u => u.Id == Id).ToList();
-                if (user == null) return NotFound();
+                var user = _userBusiness.GetUserById(Id);
+                if (user == null)
+                    return NotFound(new { erro = "Não foi encontrado nenhum usuário!" });
                 return Ok(user);
             }
             catch (System.Exception)
             {
-                throw;
+                return BadRequest(new { Erro = "Não foi possível buscar usuário" });
+            }
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        public ActionResult Delete(Guid Id)
+        {
+            try
+            {
+                _userBusiness.DeleteUser(Id);
+                return NoContent();
+            }
+            catch (System.Exception)
+            {
+                return BadRequest(new { Erro = "Não foi possível deletar usuário" });
             }
         }
     }
