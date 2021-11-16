@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Authentication;
 using Chimera_v2.Data;
 using Chimera_v2.DTOs;
 using Chimera_v2.Models;
@@ -28,23 +27,29 @@ namespace Chimera_v2.Repository.Users
                     Role = u.Role
                 }).ToList();
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception($"Erro ao tentar buscar usuários. Erro: {ex.Message}");
             }
         }
         public UserDTO GetUserById(Guid id)
         {
-            var user = _context.Users
-            .Where(u => u.Id.Equals(id))
-            .Select(u => new UserDTO
+            try
             {
-                Username = u.Username,
-                Password = u.Password,
-                Role = u.Role
-            })
-            .FirstOrDefault();
-            return user ?? null;
+                return _context.Users
+                .Where(u => u.Id.Equals(id))
+                .Select(u => new UserDTO
+                {
+                    Username = u.Username,
+                    Password = u.Password,
+                    Role = u.Role
+                })
+                .FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Erro ao tentar pegar Usuário por Identificação. Erro: {ex.Message}");
+            }
         }
         public User GetUserByUserName(string userName)
         {
@@ -57,7 +62,7 @@ namespace Chimera_v2.Repository.Users
                     Role = u.Role
                 }).FirstOrDefault(u => u.Username == userName);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception($"Erro ao tentar pegar Usuário por Username. Erro: {ex.Message}");
             }
@@ -79,7 +84,7 @@ namespace Chimera_v2.Repository.Users
                 }
                 return null;
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception($"Erro ao tentar fazer login. Erro: {ex.Message}");
             }
@@ -101,7 +106,7 @@ namespace Chimera_v2.Repository.Users
                     Password = ""
                 };
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception($"Erro ao tentar criar usuário. Erro: {ex.Message}");
             }
@@ -113,7 +118,7 @@ namespace Chimera_v2.Repository.Users
                 var user = GetUserByUserName(userLoginDto.Username);
                 if (user == null) return null;
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception($"Erro ao tentar atualizar usuário. Erro: {ex.Message}");
             }
@@ -132,7 +137,7 @@ namespace Chimera_v2.Repository.Users
             {
                 return _context.Users.Any(u => u.Username == userName.ToLower());
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception($"Erro ao verificar se usuário existe. Erro: {ex.Message}");
             }

@@ -59,7 +59,14 @@ namespace Chimera_v2.Controllers
         {
             try
             {
-                _userBusiness.Register(userLoginDto);
+                if (_userBusiness.UserExists(userLoginDto.Username))
+                {
+                    return BadRequest(new { Erro = "Erro ao tentar Registrar Usuário!, Usuário já existe!" });
+                }
+                else
+                {
+                    _userBusiness.Register(userLoginDto);
+                }
             }
             catch (System.Exception)
             {
@@ -73,7 +80,7 @@ namespace Chimera_v2.Controllers
         }
 
         [HttpGet]
-        [Route("getAll")]
+        [Route("GetAllUsers")]
         [Authorize(Roles = "Admin")]
         public ActionResult GetAll()
         {
@@ -90,7 +97,7 @@ namespace Chimera_v2.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("GetUser/{id}")]
         [Authorize(Roles = "Admin")]
         public ActionResult Get(Guid Id)
         {
@@ -107,7 +114,7 @@ namespace Chimera_v2.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("DeleteUser/{id}")]
         [Authorize(Roles = "Admin")]
         public ActionResult Delete(Guid Id)
         {
