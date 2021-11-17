@@ -27,16 +27,16 @@ namespace Chimera_v2.Controllers
             _userBusiness = userBusiness;
         }
 
-        [HttpPost]
-        [Route("Login")]
+        [HttpPost("Login")]
         public async Task<ActionResult<dynamic>> Login([FromBody] UserLoginDto userLoginDto)
         {
             try
             {
                 var userContext = _userBusiness.GetUserByUserName(userLoginDto.Username);
                 if (userContext == null)
-                    return Unauthorized(new { Erro = "Usuário ou senha inválidos!" });
-
+                {
+                    return BadRequest(new { erro = "Usuario não existe!" });
+                }
                 var userToLogin = _userBusiness.Login(userLoginDto);
                 var token = _tokenService.GenerateToken(userContext);
                 userContext.Password = "";
@@ -47,41 +47,65 @@ namespace Chimera_v2.Controllers
                     mesangem = "Autenticado com sucesso!"
                 });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return BadRequest(new { Erro = "Não foi possível realizar o login" });
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                   $"Erro ao tentar efetuar login!. Erro: {ex.Message}");
             }
         }
 
-        [HttpPost]
-        [Route("Register")]
+        [HttpPost("Register")]
         public async Task<ActionResult<dynamic>> Register([FromBody] UserLoginDto userLoginDto)
         {
             try
             {
                 if (_userBusiness.UserExists(userLoginDto.Username))
                 {
-                    return BadRequest(new { Erro = "Erro ao tentar Registrar Usuário!, Usuário já existe!" });
+                    return BadRequest(new { Erro = "Usuário já existe!" });
                 }
                 else
                 {
                     _userBusiness.Register(userLoginDto);
                 }
+                return new
+                {
+                    user = userLoginDto,
+                    mensagem = "Usuário cadastrado com sucesso!"
+                };
             }
-            catch (System.Exception)
+            catch (Exception ex)
             {
-                return BadRequest(new { Erro = "Erro ao tentar Registrar Usuário!" });
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                   $"Erro ao tentar criar usuário!. Erro: {ex.Message}");
             }
-            return new
-            {
-                user = userLoginDto,
-                mensagem = "Usuário cadastrado com sucesso!"
-            };
         }
 
-        [HttpGet]
-        [Route("GetAllUsers")]
-        [Authorize(Roles = "Admin")]
+        [HttpPut("UpdateUser")]
+        // [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<dynamic>> UpdateUser([FromBody] User user)
+        {
+            try
+            {
+                var users = _userBusiness.GetUserById(user.Id);
+                if (users == null)
+                {
+                    return BadRequest(new { erro = "Usuario não existe!" });
+                }
+                else
+                {
+                    var userToUpdate = _userBusiness.UpdateUser(user);
+                    return Ok(userToUpdate);
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                   $"Erro ao tentar atualizar usuário!. Erro: {ex.Message}");
+            }
+        }
+
+        [HttpGet("GetAllUsers")]
+        // [Authorize(Roles = "Admin")]
         public ActionResult GetAll()
         {
             try
@@ -91,41 +115,46 @@ namespace Chimera_v2.Controllers
                     return NotFound(new { erro = "Não foi encontrado nenhum usuário!" });
                 return Ok(users);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return BadRequest(new { Erro = "Não foi possível buscar usuário" });
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                   $"Erro ao tentar buscar usuários!. Erro: {ex.Message}");
             }
         }
 
         [HttpGet("GetUser/{id}")]
-        [Authorize(Roles = "Admin")]
-        public ActionResult Get(Guid Id)
+        // [Authorize(Roles = "Admin")]
+        public ActionResult Get(Guid id)
         {
             try
             {
-                var user = _userBusiness.GetUserById(Id);
+                var user = _userBusiness.GetUserById(id);
                 if (user == null)
+                {
                     return NotFound(new { erro = "Não foi encontrado nenhum usuário!" });
+                }
                 return Ok(user);
             }
-            catch (System.Exception)
+            catch (Exception ex)
             {
-                return BadRequest(new { Erro = "Não foi possível buscar usuário" });
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                   $"Erro ao tentar buscar usuário!. Erro: {ex.Message}");
             }
         }
 
         [HttpDelete("DeleteUser/{id}")]
-        [Authorize(Roles = "Admin")]
-        public ActionResult Delete(Guid Id)
+        // [Authorize(Roles = "Admin")]
+        public ActionResult Delete(Guid id)
         {
             try
             {
-                _userBusiness.DeleteUser(Id);
+                _userBusiness.DeleteUser(id);
                 return NoContent();
             }
-            catch (System.Exception)
+            catch (Exception ex)
             {
-                return BadRequest(new { Erro = "Não foi possível deletar usuário" });
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                   $"Erro ao tentar deletar usuário!. Erro: {ex.Message}");
             }
         }
     }

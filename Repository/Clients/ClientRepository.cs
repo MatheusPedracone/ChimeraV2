@@ -27,7 +27,7 @@ namespace Chimera_v2.Repository.Clients
             return _context.Clients
                 .FirstOrDefault(c => c.Id == id);
         }
-        public ClientDTO GetClient(Guid id)
+        public ClientDTO GetClientById(Guid id)
         {
             var client = _context.Clients
                .Include(c => c.Adress)
@@ -87,7 +87,7 @@ namespace Chimera_v2.Repository.Clients
             // vejo se esse client já existe
             if (client != default)
             {
-                throw new BadHttpRequestException("Client already exists!");
+               throw new Exception("Cliente já existe!");
             }
             // crio o novo client convertendo pra Dto
             _context.Clients.Add(new Client
@@ -137,7 +137,7 @@ namespace Chimera_v2.Repository.Clients
                     .SingleOrDefault();
 
                 //se o guid for diferente de null, eu vou fazer o update
-                if (clientDto.Adress.Guid != null)
+                if (clientDto.Adress.Guid != default)
                 {
                     // Update adress
                     _context.Entry(adressOrigin).CurrentValues.SetValues(clientDto.Adress);
@@ -174,44 +174,6 @@ namespace Chimera_v2.Repository.Clients
                     County = clientDto.Adress.County,
                     AdressNumber = clientDto.Adress.AdressNumber,
                     UF = clientDto.Adress.UF
-                }
-            };
-        }
-        public ClientDTO Disable(Guid id)
-        {
-            if (!_context.Clients.Any(c => c.Id.Equals(id))) return null;
-            var clientStatus = _context.Clients.SingleOrDefault(c => c.Id.Equals(id));
-
-            if (clientStatus != null)
-            {
-                clientStatus.Enabled = false;
-                try
-                {
-                    _context.Entry(clientStatus).CurrentValues.SetValues(clientStatus);
-                    _context.SaveChanges();
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-            }
-            return new ClientDTO
-            {
-                Name = clientStatus.Name,
-                CPF = clientStatus.CPF,
-                IE = clientStatus.IE,
-                ContributorType = clientStatus.ContributorType,
-                Email = clientStatus.Email,
-                Phone = clientStatus.Phone,
-                Enabled = clientStatus.Enabled,
-                Adress = new AdressDTO
-                {
-                    ZipCode = clientStatus.Adress.ZipCode,
-                    Street = clientStatus.Adress.Street,
-                    District = clientStatus.Adress.District,
-                    County = clientStatus.Adress.County,
-                    AdressNumber = clientStatus.Adress.AdressNumber,
-                    UF = clientStatus.Adress.UF
                 }
             };
         }

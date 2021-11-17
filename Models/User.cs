@@ -10,9 +10,7 @@ namespace Chimera_v2.Models
         [MaxLength(50)]
         public string Username { get; set; }
 
-        [Required]
-        [MinLength(8)]
-        [MaxLength(100)]
+        
         public string Password { get; set; }
 
         [Required]

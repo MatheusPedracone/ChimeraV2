@@ -2,6 +2,7 @@ using System;
 using Chimera_v2.Business;
 using Chimera_v2.DTOs;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Chimera_v2.Controllers
@@ -17,12 +18,13 @@ namespace Chimera_v2.Controllers
         {
             _clientBusiness = clientBusiness;
         }
-        // busca todos os clients
-        [HttpGet]
-        [Authorize(Roles = "Admin")]
+
+    // Busca todos os clients
+        [HttpGet("GetClients")]
+    // [Authorize(Roles = "Admin")]
         public ActionResult Get()
         {
-            var clients = _clientBusiness.FindAll();
+            var clients = _clientBusiness.GetAllClients();
             if (clients == null)
             {
                 return NotFound(new { erro = "Nenhum cliente encontrado!" });
@@ -30,56 +32,59 @@ namespace Chimera_v2.Controllers
             return Ok(clients);
         }
 
-        // busca um client pelo id
-        [HttpGet("{id}")]
-        [Authorize(Roles = "Admin")]
-
+    // Busca um client pelo id
+        [HttpGet("GetClient/{id}")]
+    // [Authorize(Roles = "Admin")]
         public ActionResult Get(Guid id)
         {
-            var client = _clientBusiness.FindById(id);
+            var client = _clientBusiness.GetClientById(id);
             if (client == null)
             {
                 return NotFound(new { erro = "Cliente não encontrado!" });
             }
             return Ok(client);
         }
-        //criação de um novo client
-        [HttpPost]
-        [Authorize]
+
+    //Criação de um novo client
+        [HttpPost("CreateClient")]
+     // [Authorize]
         public ActionResult Post([FromBody] ClientDTO clientDto)
         {
-            if (clientDto == null) return BadRequest();
             try
             {
-                var newClientDto = _clientBusiness.Create(clientDto);
+                if (clientDto == null) return BadRequest();
+                var newClientDto = _clientBusiness.CreateClient(clientDto);
                 return Ok(newClientDto);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return BadRequest(new { Erro = "Já existe um Cliente cadastrado com esse nome!" });
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                   $"Erro ao tentar criar cliente!. Erro: {ex.Message}");
             }
         }
 
-        // atualização de um client
-        [HttpPut]
-        [Authorize]
+    // Atualização de um client
+        [HttpPut("UpdateClient")]
+    // [Authorize]
         public ActionResult Put([FromBody] ClientDTO clientDto)
         {
-            if (clientDto.Adress.Guid == null) return BadRequest();
             try
             {
-                var client = _clientBusiness.Update(clientDto);
+                if (clientDto.Adress.Guid == null) return BadRequest();
+
+                var client = _clientBusiness.UpdateClient(clientDto);
                 return Ok(client);
             }
-            catch (Exception)
+             catch (Exception ex)
             {
-                return BadRequest(new { Erro = "Erro ao tentar atualizar as informações do cliente!" });
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                   $"Erro ao tentar atualizar cliente!. Erro: {ex.Message}");
             }
         }
 
-        //deleção de um client
-        [HttpDelete("{id}")]
-        [Authorize]
+    //Deleção de um client
+        [HttpDelete("DeleteClient/{id}")]
+    // [Authorize]
         public ActionResult Delete(Guid id)
         {
             _clientBusiness.Delete(id);

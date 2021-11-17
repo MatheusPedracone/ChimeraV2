@@ -11,9 +11,9 @@ namespace Chimera_v2.Repository.Users
         List<UserDTO> GetAllUsers();
         UserDTO GetUserById(Guid id);
         User GetUserByUserName(string userName);
-        UserLoginDto CreateUser(UserLoginDto userLoginDto);
-        UserLoginDto ValidateCredentials (UserLoginDto userLoginDto);
-        UserLoginDto UpdateUser (UserLoginDto userLoginDto);
+        UserLoginDto Register(UserLoginDto userLoginDto);
+        UserLoginDto Login (UserLoginDto userLoginDto);
+        User UpdateUser (User User);
         void DeleteUser(Guid id);
     }
 }

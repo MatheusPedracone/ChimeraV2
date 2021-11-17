@@ -14,37 +14,100 @@ namespace Chimera_v2.Business.Implementations
         {
             _repository = repository;
         }
+
         public List<UserDTO> GetAllUsers()
         {
-            return _repository.GetAllUsers();
+            try
+            {
+                return _repository.GetAllUsers();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
+
         public UserDTO GetUserById(Guid id)
         {
-            return _repository.GetUserById(id);
+            try
+            {
+                return _repository.GetUserById(id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
+
         public User GetUserByUserName(string userName)
         {
-            return _repository.GetUserByUserName(userName);
+            try
+            {
+                return _repository.GetUserByUserName(userName);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
+
         public UserLoginDto Login(UserLoginDto userLoginDto)
         {
-            return _repository.ValidateCredentials(userLoginDto);
+            try
+            {
+                return _repository.Login(userLoginDto);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
+
         public UserLoginDto Register(UserLoginDto userLoginDto)
         {
-            return _repository.CreateUser(userLoginDto);
+            try
+            {
+                return _repository.Register(userLoginDto);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
-        public UserLoginDto UpdateUser(UserLoginDto userLoginDto)
+
+        public User UpdateUser(User user)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return _repository.UpdateUser(user);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
-         public void DeleteUser(Guid id)
+
+        public void DeleteUser(Guid id)
         {
-            _repository.DeleteUser(id);
+            try
+            {
+                _repository.DeleteUser(id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
         public bool UserExists(string userName)
         {
-            return _repository.UserExists(userName);
+            try
+            {
+                return _repository.UserExists(userName);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

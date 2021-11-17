@@ -13,7 +13,7 @@ namespace Chimera_v2.Business
         User GetUserByUserName(string userName);
         UserLoginDto Login(UserLoginDto userLoginDto);
         UserLoginDto Register(UserLoginDto userLoginDto);
-        UserLoginDto UpdateUser(UserLoginDto userLoginDto);
+        User UpdateUser(User user);
         void DeleteUser(Guid id);
     }
 }

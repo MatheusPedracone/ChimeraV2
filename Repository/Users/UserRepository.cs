@@ -16,114 +16,91 @@ namespace Chimera_v2.Repository.Users
         {
             _context = context;
         }
+        public User GetByIdTracking(Guid id)
+        {
+            return _context.Users
+                .FirstOrDefault(c => c.Id == id);
+        }
+
         public List<UserDTO> GetAllUsers()
         {
-            try
+            return _context.Users.Select(u => new UserDTO
             {
-                return _context.Users.Select(u => new UserDTO
-                {
-                    Username = u.Username,
-                    Password = u.Password,
-                    Role = u.Role
-                }).ToList();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Erro ao tentar buscar usuários. Erro: {ex.Message}");
-            }
+                Username = u.Username,
+                Password = "",
+                Role = u.Role
+            }).ToList();
         }
         public UserDTO GetUserById(Guid id)
         {
-            try
+            var user = _context.Users
+            .AsNoTracking()
+            .Where(u => u.Id.Equals(id))
+            .Select(u => new UserDTO
             {
-                return _context.Users
-                .Where(u => u.Id.Equals(id))
-                .Select(u => new UserDTO
-                {
-                    Username = u.Username,
-                    Password = u.Password,
-                    Role = u.Role
-                })
-                .FirstOrDefault();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Erro ao tentar pegar Usuário por Identificação. Erro: {ex.Message}");
-            }
+                Username = u.Username,
+                Password = "",
+                Role = u.Role
+            })
+            .FirstOrDefault();
+            return user ?? null;
         }
         public User GetUserByUserName(string userName)
         {
-            try
+            return _context.Users.AsNoTracking().Select(u => new User
             {
-                return _context.Users.AsNoTracking().Select(u => new User
-                {
-                    Username = u.Username,
-                    Password = u.Password,
-                    Role = u.Role
-                }).FirstOrDefault(u => u.Username == userName);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Erro ao tentar pegar Usuário por Username. Erro: {ex.Message}");
-            }
+                Username = u.Username,
+                Password = u.Password,
+                Role = u.Role
+            }).FirstOrDefault(u => u.Username == userName);
         }
-        public UserLoginDto ValidateCredentials(UserLoginDto userLoginDto)
+        public UserLoginDto Login(UserLoginDto userLoginDto)
         {
-            try
-            {
-                var userContext = GetUserByUserName(userLoginDto.Username);
+            var userContext = GetUserByUserName(userLoginDto.Username);
 
-                //verifico se user existe e se a senha é igual a do banco
-                if (BC.Verify(userLoginDto.Password, userContext.Password))
-                {
-                    return new UserLoginDto
-                    {
-                        Username = userContext.Username,
-                        Password = userContext.Password
-                    };
-                }
-                return null;
-            }
-            catch (Exception ex)
+            //verifico se user existe e se a senha é igual a do banco
+            if (BC.Verify(userLoginDto.Password, userContext.Password))
             {
-                throw new Exception($"Erro ao tentar fazer login. Erro: {ex.Message}");
-            }
-        }
-        public UserLoginDto CreateUser(UserLoginDto userLoginDto)
-        {
-            try
-            {
-                _context.Users.Add(new User
-                {
-                    Username = userLoginDto.Username,
-                    Password = BC.HashPassword(userLoginDto.Password),
-                    Role = "Usuário"
-                });
-                _context.SaveChanges();
                 return new UserLoginDto
                 {
-                    Username = userLoginDto.Username,
-                    Password = ""
+                    Username = userContext.Username,
+                    Password = userContext.Password
                 };
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Erro ao tentar criar usuário. Erro: {ex.Message}");
-            }
-        }
-        public UserLoginDto UpdateUser(UserLoginDto userLoginDto)
-        {
-            try
-            {
-                var user = GetUserByUserName(userLoginDto.Username);
-                if (user == null) return null;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Erro ao tentar atualizar usuário. Erro: {ex.Message}");
             }
             return null;
         }
+        public User UpdateUser(User user)
+        {
+            var userOrigin = GetByIdTracking(user.Id);
+
+            if (userOrigin != null)
+            {
+                _context.Entry(userOrigin).CurrentValues.SetValues(user);
+                _context.SaveChanges();
+            }
+            return new User
+            {
+                Username = user.Username,
+                Password = BC.HashPassword(user.Password),
+                Role = "Usuário"
+            };
+        }
+        public UserLoginDto Register(UserLoginDto userLoginDto)
+        {
+            _context.Users.Add(new User
+            {
+                Username = userLoginDto.Username,
+                Password = BC.HashPassword(userLoginDto.Password),
+                Role = "Usuário"
+            });
+            _context.SaveChanges();
+            return new UserLoginDto
+            {
+                Username = userLoginDto.Username,
+                Password = userLoginDto.Password
+            };
+        }
+
         public void DeleteUser(Guid id)
         {
             var UserToDelete = _context.Users.Where(u => u.Id == id).First();
@@ -133,14 +110,7 @@ namespace Chimera_v2.Repository.Users
         }
         public bool UserExists(string userName)
         {
-            try
-            {
-                return _context.Users.Any(u => u.Username == userName.ToLower());
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Erro ao verificar se usuário existe. Erro: {ex.Message}");
-            }
+            return _context.Users.Any(u => u.Username == userName.ToLower());
         }
     }
 }

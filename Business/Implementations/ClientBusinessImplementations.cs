@@ -16,29 +16,65 @@ namespace Chimera_v2.Business.Implementations
         {
             _repository = repository;
         }
-        public List<ClientDTO> FindAll()
+
+        public List<ClientDTO> GetAllClients()
         {
-            return  _repository.GetAllClients();
+            try
+            {
+                return _repository.GetAllClients();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
-        public ClientDTO FindById(Guid id)
+
+        public ClientDTO GetClientById(Guid id)
         {
-            return  _repository.GetClient(id);
+            try
+            {
+                return _repository.GetClientById(id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
-        public ClientDTO Create(ClientDTO clientDto)
+
+        public ClientDTO CreateClient(ClientDTO clientDto)
         {
-            return  _repository.CreateClient(clientDto);
+            try
+            {
+                return _repository.CreateClient(clientDto);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
-        public ClientDTO Update(ClientDTO clientDto)
+
+        public ClientDTO UpdateClient(ClientDTO clientDto)
         {
-            return  _repository.UpdateClient(clientDto);
+            try
+            {
+                return _repository.UpdateClient(clientDto);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
-       public ClientDTO Disable(Guid id)
-        {
-            return  _repository.Disable(id);
-        }
+
         public void Delete(Guid id)
         {
-            _repository.DeleteClient(id);
+            try
+            {
+                _repository.DeleteClient(id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }
